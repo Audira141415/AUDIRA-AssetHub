@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme {
+  --color-background: #E0E5EC;
+  --color-foreground: #3D4852;
+  --color-muted: #6B7280;
+  --color-muted-foreground: #6B7280;
+  --color-accent: #6C63FF;
+  --color-accent-light: #8B84FF;
+  --color-accent-secondary: #38B2AC;
+  --color-border: transparent;
+  --color-input: #E0E5EC;
+  --color-ring: #6C63FF;
+  --color-primary: #6C63FF;
+  --color-primary-foreground: #FAFAFA;
+  
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 24px;
+  --radius-4xl: 32px;
+}
+
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@utility shadow-neu-extruded {
+  box-shadow: 9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgba(255 255 255 / 0.5);
+}
+
+@utility shadow-neu-hover {
+  box-shadow: 12px 12px 20px rgb(163 177 198 / 0.7), -12px -12px 20px rgba(255 255 255 / 0.6);
+}
+
+@media print {
+  body {
+    background: white !important;
+  }
+  
+  /* Hide sidebar and navigation */
+  .w-64.bg-background, .sidebar, nav, [role="navigation"] {
+    display: none !important;
+  }
+  
+  /* Hide specific buttons during print */
+  button {
+    display: none !important;
+  }
+  
+  /* Reset shadows and borders for clean print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  
+  /* Make main content full width */
+  main, .flex-1 {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure colors print properly */
+  .bg-background {
+    background-color: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .border-neu {
+    border: 1px solid #ccc !important;
+  }
+}
+
+@utility shadow-neu-small {
+  box-shadow: 5px 5px 10px rgb(163 177 198 / 0.6), -5px -5px 10px rgba(255 255 255 / 0.5);
+}
+
+@utility shadow-neu-inset {
+  box-shadow: inset 6px 6px 10px rgb(163 177 198 / 0.6), inset -6px -6px 10px rgba(255 255 255 / 0.5);
+}
+
+@utility shadow-neu-inset-deep {
+  box-shadow: inset 10px 10px 20px rgb(163 177 198 / 0.7), inset -10px -10px 20px rgba(255 255 255 / 0.6);
+}
+
+@utility shadow-neu-inset-small {
+  box-shadow: inset 3px 3px 6px rgb(163 177 198 / 0.6), inset -3px -3px 6px rgba(255 255 255 / 0.5);
+}
+
+@utility border-neu {
+  border-width: 1px;
+  border-style: solid;
+  border-top-color: rgba(255, 255, 255, 0.7);
+  border-left-color: rgba(255, 255, 255, 0.7);
+  border-bottom-color: rgba(163, 177, 198, 0.4);
+  border-right-color: rgba(163, 177, 198, 0.4);
+}
+
+@layer base {
+  * {
+    @apply outline-ring;
+  }
+  body {
+    @apply bg-[#E4E9F2] text-foreground;
+  }
+  /* Remove dark mode invert styles if any */
+}

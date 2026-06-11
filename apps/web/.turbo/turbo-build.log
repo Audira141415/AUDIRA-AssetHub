@@ -1,0 +1,24 @@
+
+> web@0.1.0 build C:\xampp\htdocs\AUDIRA-AssetHub\apps\web
+> next build
+
+▲ Next.js 16.2.9 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.2s
+  Running TypeScript ...
+Failed to type check.
+
+./src/components/assets/MoveAssetModal.tsx:9:80
+Type error: Cannot find module '@/components/ui/dialog' or its corresponding type declarations.
+
+  [90m 7 |[0m ..., useQuery } [36mfrom[0m[32m"@tanstack/react-query"[0m
+  [90m 8 |[0m ...
+[31m[1m>[0m [90m 9 |[0m ...[33mogHeader[0m, [33mDialogTitle[0m, [33mDialogTrigger[0m } [36mfrom[0m[32m"@/components/ui/dialog"[0m
+  [90m   |[0m                                               [31m[1m^[0m
+  [90m10 |[0m ...[32mui/button"[0m
+  [90m11 |[0m ...[32mi/input"[0m
+  [90m12 |[0m ...[32mi/label"[0m
+Next.js build worker exited with code: 1 and signal: null
+ ELIFECYCLE  Command failed with exit code 1.
