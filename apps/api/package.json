@@ -1,0 +1,9 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "venv\\Scripts\\uvicorn src.main:app --port 3413 --reload",
+    "start": "venv\\Scripts\\uvicorn src.main:app --port 3413"
+  }
+}
