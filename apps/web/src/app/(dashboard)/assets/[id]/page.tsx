@@ -7,28 +7,133 @@ import { Button } from "@/components/ui/button"
 import { 
   ChevronRight, Edit2, ArrowRightLeft, Copy, Printer, Download, QrCode, Trash2, 
   Server, MapPin, Layers, Cpu, HardDrive, Network, Zap, Settings, ShieldAlert, 
-  Clock, CheckCircle2, Pen, Plus, Minus, FilePlus, MoreHorizontal, AlertTriangle, FileText, Phone, Mail, FileDown, Copy as CopyIcon
+  Clock, CheckCircle2, Pen, Plus, Minus, FilePlus, MoreHorizontal, AlertTriangle, FileText, Phone, Mail, FileDown, Copy as CopyIcon,
+  Info, Shield, Paperclip, History, ListChecks, Eye, UploadCloud, Image as ImageIcon, FileSpreadsheet
 } from "lucide-react"
 import { getFullAssetDetails, getAssetImage, deleteAsset, cloneAsset, updateAssetLocation } from "@/lib/mock-data"
+import { apiClient } from "@/lib/api-client"
+import { motion } from "framer-motion"
 
 export default function EnterpriseAssetDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  const { details: asset, specs } = getFullAssetDetails(id)
   
+  const [asset, setAsset] = useState<any>(null)
+  const [specs, setSpecs] = useState<any>({})
+  const [history, setHistory] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
   const [isMounted, setIsMounted] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isMoveDialogOpen, setIsMoveDialogOpen] = useState(false)
-  const [moveData, setMoveData] = useState({ site: asset.site, building: asset.building, room: asset.room, rack: asset.rack, uPosition: asset.uPosition.toString() })
-
-  useEffect(() => setIsMounted(true), [])
+  const [moveData, setMoveData] = useState({ site: "", building: "", room: "", rack: "", uPosition: "1" })
 
   const tabs = ["Overview", "Specifications", "Location", "Warranty", "Attachments", "Movements", "History", "QR Code", "Audit Log"]
   const [activeTab, setActiveTab] = useState("Overview")
 
-  const handleDelete = () => {
-    if (deleteAsset(asset.tag)) {
+  useEffect(() => {
+    setIsMounted(true)
+    const hash = window.location.hash.replace('#', '')
+    if (hash) {
+      const matchedTab = tabs.find(t => t.toLowerCase().replace(' ', '-') === hash)
+      if (matchedTab) setActiveTab(matchedTab)
+    }
+
+    // Fetch data
+    const fetchAsset = async () => {
+      try {
+        setIsLoading(true);
+        const res = await apiClient.get(`/assets/${id}`);
+        const apiData = res.data;
+        
+        // Merge API data with mock UI format
+        const mockBase = getFullAssetDetails(apiData.asset_tag || id);
+        
+        const mappedAsset = {
+          ...mockBase.details,
+          id: apiData.id,
+          tag: apiData.asset_tag,
+          hostname: apiData.hostname || mockBase.details.hostname,
+          serial: apiData.serial_number || mockBase.details.serial,
+          manufacturer: apiData.manufacturer || mockBase.details.manufacturer,
+          model: apiData.model || mockBase.details.model,
+          status: apiData.status || mockBase.details.status,
+          vendor: apiData.vendor ? apiData.vendor.name : mockBase.details.vendor,
+          purchaseDate: apiData.purchase_date || mockBase.details.purchaseDate,
+          warrantyStart: apiData.warranty_start || mockBase.details.warrantyStart,
+          warrantyEnd: apiData.warranty_end || mockBase.details.warrantyEnd,
+          category: apiData.category ? apiData.category.name : mockBase.details.category,
+          name: apiData.model || mockBase.details.name,
+          modelDesc: apiData.manufacturer && apiData.model ? `${apiData.manufacturer} ${apiData.model}` : mockBase.details.modelDesc,
+          locationQuick: "Batam DC • Floor • No U-Position", // Default for Racks or update dynamically
+        };
+
+        setAsset(mappedAsset);
+        
+        if (mappedAsset.category === 'Rack') {
+          setSpecs({
+            "Height": "42U",
+            "Dimensions": "600mm x 1070mm x 2050mm",
+            "Weight Capacity": "1,360 kg (Static), 1,022 kg (Dynamic)",
+            "Material": "Cold-Rolled Steel",
+            "Cooling Type": "Perforated Doors (80% Open)",
+            "Color": "Black (RAL 9005)"
+          });
+        } else {
+          setSpecs(mockBase.specs);
+        }
+        
+        setMoveData({
+          site: mappedAsset.site,
+          building: mappedAsset.building,
+          room: mappedAsset.room,
+          rack: mappedAsset.rack,
+          uPosition: mappedAsset.uPosition.toString()
+        });
+
+        try {
+          const historyRes = await apiClient.get(`/assets/${apiData.id}/movements`);
+          setHistory(historyRes.data);
+        } catch (hErr) {
+          console.warn("Could not fetch history", hErr);
+        }
+
+      } catch (err: any) {
+        console.warn("API fetch failed, using fallback mock", err);
+        const mockFallback = getFullAssetDetails(id);
+        setAsset(mockFallback.details);
+        setSpecs(mockFallback.specs);
+        setMoveData({
+          site: mockFallback.details.site,
+          building: mockFallback.details.building,
+          room: mockFallback.details.room,
+          rack: mockFallback.details.rack,
+          uPosition: mockFallback.details.uPosition.toString()
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAsset();
+  }, [id])
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab)
+    window.history.replaceState(null, '', `#${tab.toLowerCase().replace(' ', '-')}`)
+  }
+
+  const handleDelete = async () => {
+    try {
+      if (asset.id) {
+        await apiClient.delete(`/assets/${asset.id}`)
+      }
       router.push("/assets")
+    } catch (err) {
+      console.error("Delete failed via API, falling back to mock", err)
+      if (deleteAsset(asset.tag)) {
+        router.push("/assets")
+      }
     }
   }
 
@@ -39,14 +144,28 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
     }
   }
 
-  const handleMove = () => {
-    if (updateAssetLocation(asset.tag, moveData.site, moveData.building, moveData.room, moveData.rack, moveData.uPosition)) {
-      setIsMoveDialogOpen(false)
-      window.location.reload()
+  const handleMove = async () => {
+    try {
+      const payload = {
+        notes: `Relocated. Site: ${moveData.site}, Building: ${moveData.building}, Room: ${moveData.room}, Rack: ${moveData.rack}, U: ${moveData.uPosition}`
+      };
+      
+      await apiClient.post(`/assets/${asset.id}/move`, payload);
+      
+      setIsMoveDialogOpen(false);
+      window.location.reload();
+    } catch (err) {
+      console.error("Move failed via API, falling back to mock", err);
+      if (updateAssetLocation(asset.tag, moveData.site, moveData.building, moveData.room, moveData.rack, moveData.uPosition)) {
+        setIsMoveDialogOpen(false)
+        window.location.reload()
+      }
     }
   }
 
   // --- TAB RENDERING FUNCTIONS ---
+
+  if (isLoading || !asset) return <div className="p-8 text-center text-muted-foreground font-bold h-screen flex items-center justify-center">Loading Asset Details...</div>
 
   const renderOverview = () => (
     <div className="flex flex-col xl:flex-row gap-8">
@@ -62,14 +181,15 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             <CardTitle className="text-lg font-bold text-foreground">General Information</CardTitle>
           </CardHeader>
           <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
-            <DataRow label="Asset Tag" value={asset.tag} bold />
+            <DataRow label="Asset Number (NIB)" value={<Badge text={asset.assetNumber || "-"} color="accent" />} />
+            <DataRow label="Asset Tag (IT)" value={asset.tag} bold />
             <DataRow label="Hostname" value={asset.hostname} />
-            <DataRow label="Category" value={<Badge text={asset.category} color="accent" />} />
+            <DataRow label="Category" value={<Badge text={asset.category} color="purple" />} />
             <DataRow label="Manufacturer" value={asset.manufacturer} />
             <DataRow label="Model" value={asset.model} />
             <DataRow label="Serial Number" value={asset.serial} />
             <DataRow label="Status" value={<Badge text={asset.status} color="green" />} />
-            <DataRow label="Lifecycle" value={<Badge text={asset.lifecycle} color="purple" />} />
+            <DataRow label="Lifecycle" value={asset.lifecycle} />
             <DataRow label="Criticality" value={<Badge text={asset.criticality} color="red" />} />
             <DataRow label="Department" value={asset.dept} />
             <DataRow label="Owner" value={asset.owner} />
@@ -129,6 +249,7 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
   )
 
   const renderLocation = () => {
+    const isRack = asset.category?.toLowerCase() === 'rack'
     const units = Array.from({length: 42}, (_, i) => 42 - i)
     
     return (
@@ -143,39 +264,61 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
               <HierarchyItem level={1} label="Building" value={asset.building} />
               <HierarchyItem level={2} label="Floor" value={asset.floor} />
               <HierarchyItem level={3} label="Room" value={asset.room} />
-              <HierarchyItem level={4} label="Rack" value={asset.rack} />
-              <HierarchyItem level={5} label="U Position" value={asset.uPosition.toString()} highlight />
+              {!isRack && <HierarchyItem level={4} label="Rack" value={asset.rack} />}
+              {!isRack && <HierarchyItem level={5} label="U Position" value={asset.uPosition?.toString() || '-'} highlight />}
+              {isRack && <HierarchyItem level={4} label="Grid Row" value={asset.tag.split('-')[2] || 'A'} />}
+              {isRack && <HierarchyItem level={5} label="Grid Pos" value={asset.tag.split('-')[3] || '1'} highlight />}
             </CardContent>
           </Card>
         </div>
         
-        <div className="xl:col-span-2">
-          <Card>
-            <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8 flex flex-row items-center justify-between">
-              <CardTitle className="text-lg font-bold text-foreground">42U Rack Visualization</CardTitle>
-              <Button variant="outline" className="shadow-neu-extruded border-neu">Open Rack View</Button>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="max-w-md mx-auto bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-[32px] p-4 flex flex-col gap-1 max-h-[800px] overflow-y-auto scrollbar-hide">
-                <div className="text-center font-bold text-foreground mb-4 pt-2">RACK {asset.rack}</div>
-                {units.map(u => {
-                  const isActive = u === asset.uPosition
-                  return (
-                    <div key={u} className={`flex items-center gap-4 py-1.5 px-3 rounded-xl transition-all ${isActive ? 'bg-accent shadow-neu-inset-deep' : 'hover:bg-[#A3B1C6]/10'}`}>
-                      <span className={`text-xs font-bold w-6 text-right ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{u}</span>
-                      <div className={`flex-1 rounded-lg p-2 flex items-center gap-3 ${isActive ? 'bg-accent border border-white/20 shadow-neu-extruded' : 'bg-background shadow-neu-extruded border border-white/40'}`}>
-                        <div className={`w-2 h-2 rounded-full shadow-sm ${isActive ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-[#A3B1C6]'}`}></div>
-                        <span className={`text-xs font-bold ${isActive ? 'text-white' : 'text-muted-foreground'}`}>
-                          {isActive ? asset.tag : 'Blank Panel'}
-                        </span>
+        {!isRack ? (
+          <div className="xl:col-span-2">
+            <Card>
+              <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8 flex flex-row items-center justify-between">
+                <CardTitle className="text-lg font-bold text-foreground">42U Rack Visualization</CardTitle>
+                <Button variant="outline" className="shadow-neu-extruded border-neu">Open Rack View</Button>
+              </CardHeader>
+              <CardContent className="p-8">
+                <div className="max-w-md mx-auto bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-[32px] p-4 flex flex-col gap-1 max-h-[800px] overflow-y-auto scrollbar-hide">
+                  <div className="text-center font-bold text-foreground mb-4 pt-2">RACK {asset.rack}</div>
+                  {units.map(u => {
+                    const isActive = u === parseInt(asset.uPosition || '0')
+                    return (
+                      <div key={u} className={`flex items-center gap-4 py-1.5 px-3 rounded-xl transition-all ${isActive ? 'bg-accent shadow-neu-inset-deep' : 'hover:bg-[#A3B1C6]/10'}`}>
+                        <span className={`text-xs font-bold w-6 text-right ${isActive ? 'text-white' : 'text-muted-foreground'}`}>{u}</span>
+                        <div className={`flex-1 rounded-lg p-2 flex items-center gap-3 ${isActive ? 'bg-accent border border-white/20 shadow-neu-extruded' : 'bg-background shadow-neu-extruded border border-white/40'}`}>
+                          <div className={`w-2 h-2 rounded-full shadow-sm ${isActive ? 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-[#A3B1C6]'}`}></div>
+                          <span className={`text-xs font-bold ${isActive ? 'text-white' : 'text-muted-foreground'}`}>
+                            {isActive ? asset.tag : 'Blank Panel'}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <div className="xl:col-span-2">
+            <Card className="h-full">
+              <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8">
+                <CardTitle className="text-lg font-bold text-foreground">Floor Plan Placement</CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 flex items-center justify-center min-h-[400px]">
+                <div className="w-full h-full min-h-[400px] rounded-[32px] bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 flex flex-col items-center justify-center gap-4 p-8 text-center">
+                  <div className="w-20 h-20 rounded-full bg-[#E4E9F2]/50 shadow-neu-inset flex items-center justify-center mb-2">
+                    <MapPin className="w-8 h-8 text-muted-foreground opacity-50" />
+                  </div>
+                  <h3 className="text-lg font-bold text-foreground">Floor plan for {asset.room}</h3>
+                  <p className="text-sm font-semibold text-muted-foreground max-w-sm">No floor plan has been uploaded for this room yet. Upload a blueprint to visualize rack placements.</p>
+                  <Button variant="outline" className="shadow-neu-extruded border-neu rounded-xl mt-4 font-bold text-sm h-12 px-6">Upload Blueprint</Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     )
   }
@@ -204,10 +347,21 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
     <Card>
       <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8 flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-bold text-foreground">Attachments & Documents</CardTitle>
-        <Button className="shadow-neu-extruded bg-accent text-white"><Plus className="w-4 h-4 mr-2" /> Upload File</Button>
+        <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-lg uppercase tracking-wider">5 Files</span>
       </CardHeader>
-      <CardContent className="p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <CardContent className="p-8 space-y-8">
+        
+        {/* Drag and Drop Zone */}
+        <div className="w-full border-2 border-dashed border-[#A3B1C6]/50 rounded-[32px] p-10 flex flex-col items-center justify-center text-center bg-[#A3B1C6]/5 hover:bg-[#A3B1C6]/10 transition-colors cursor-pointer group">
+          <div className="w-16 h-16 rounded-full bg-background shadow-neu-extruded flex items-center justify-center mb-4 text-accent group-hover:-translate-y-1 transition-transform">
+            <UploadCloud className="w-8 h-8" />
+          </div>
+          <h3 className="text-lg font-bold text-foreground mb-1">Upload New Document</h3>
+          <p className="text-sm font-medium text-muted-foreground max-w-md">Drag and drop your files here, or click to browse. Supported formats: PDF, JPG, PNG, XLS.</p>
+        </div>
+
+        {/* File Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <DocCard title="Invoice Document" type="PDF" date="12 May 2025" size="2.4 MB" />
           <DocCard title="Purchase Order" type="PDF" date="10 May 2025" size="1.1 MB" />
           <DocCard title="Vendor Contract" type="PDF" date="10 May 2025" size="5.8 MB" />
@@ -236,14 +390,26 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             </tr>
           </thead>
           <tbody className="text-foreground">
-            <tr className="hover:bg-[#A3B1C6]/10 transition-colors">
-              <td className="px-6 py-4 font-medium border-b border-white/60">10/05/2026</td>
-              <td className="px-6 py-4 border-b border-white/60"><Badge text="Move" color="accent" /></td>
-              <td className="px-6 py-4 font-medium border-b border-white/60">Staging Area</td>
-              <td className="px-6 py-4 font-bold border-b border-white/60 text-accent">R01-U24</td>
-              <td className="px-6 py-4 border-b border-white/60">Initial Deployment</td>
-              <td className="px-6 py-4 font-medium border-b border-white/60">Agus Dwi R</td>
-            </tr>
+            {history.length > 0 ? (
+              history.map((h, i) => (
+                <tr key={h.id || i} className="hover:bg-[#A3B1C6]/10 transition-colors">
+                  <td className="px-6 py-4 font-medium border-b border-white/60">
+                    {new Date(h.date).toLocaleDateString()} {new Date(h.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </td>
+                  <td className="px-6 py-4 border-b border-white/60"><Badge text="Move" color="accent" /></td>
+                  <td className="px-6 py-4 font-medium border-b border-white/60 text-muted-foreground">{h.fromLoc || "-"}</td>
+                  <td className="px-6 py-4 font-bold border-b border-white/60 text-accent">{h.toLoc || "-"}</td>
+                  <td className="px-6 py-4 border-b border-white/60 text-xs max-w-[200px] truncate" title={h.notes || "-"}>{h.notes || "-"}</td>
+                  <td className="px-6 py-4 font-medium border-b border-white/60">{h.user}</td>
+                </tr>
+              ))
+            ) : (
+              <tr className="hover:bg-[#A3B1C6]/10 transition-colors">
+                <td colSpan={6} className="px-6 py-8 text-center font-bold text-muted-foreground">
+                  No movement history recorded.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -332,6 +498,18 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
     }
   }
 
+  const tabData = [
+    { id: "Overview", label: "Overview", icon: <Info className="w-4 h-4" /> },
+    { id: "Specifications", label: "Specifications", icon: <Settings className="w-4 h-4" /> },
+    { id: "Location", label: "Location", icon: <MapPin className="w-4 h-4" /> },
+    { id: "Warranty", label: "Warranty", icon: <Shield className="w-4 h-4" />, badge: asset?.warrantyEnd && new Date(asset.warrantyEnd) < new Date() ? '🔴' : null },
+    { id: "Attachments", label: "Attachments", icon: <Paperclip className="w-4 h-4" />, badge: "5" },
+    { id: "Movements", label: "Movements", icon: <ArrowRightLeft className="w-4 h-4" />, badge: history?.length > 0 ? history.length.toString() : null },
+    { id: "History", label: "History", icon: <History className="w-4 h-4" /> },
+    { id: "QR Code", label: "QR Code", icon: <QrCode className="w-4 h-4" /> },
+    { id: "Audit Log", label: "Audit Log", icon: <ListChecks className="w-4 h-4" /> }
+  ];
+
   return (
     <div className="space-y-8 pb-12">
       <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8 mt-2">
@@ -343,6 +521,9 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             <div className="flex-1 min-w-0">
               <div className="flex flex-wrap items-center gap-3 mb-1">
                 <h1 className="text-3xl font-display font-bold text-foreground whitespace-nowrap truncate">{asset.tag}</h1>
+                <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-lg uppercase tracking-wider shadow-sm whitespace-nowrap">
+                  NIB: {asset.assetNumber || "-"}
+                </span>
                 <span className="px-3 py-1 bg-[#38B2AC]/10 text-[#38B2AC] text-xs font-bold rounded-lg uppercase tracking-wider shadow-sm whitespace-nowrap">
                   {asset.status}
                 </span>
@@ -430,20 +611,38 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
         </div>
       )}
 
-      <div className="flex overflow-x-auto gap-2 pb-2 border-b border-[#A3B1C6]/30 px-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {tabs.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 lg:px-6 py-3 text-xs lg:text-sm font-bold whitespace-nowrap rounded-t-2xl transition-all ${
-              activeTab === tab 
-                ? "text-accent bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-r border-white/60 translate-y-[1px]" 
-                : "text-muted-foreground hover:text-foreground hover:bg-white/10"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
+      {/* TABS NAVIGATION (ENHANCED) */}
+      <div className="sticky top-0 z-30 pt-4 pb-2 bg-[#E4E9F2]/80 backdrop-blur-md border-b border-[#A3B1C6]/30 px-2 -mx-2 mb-4">
+        <div className="flex overflow-x-auto gap-2 no-scrollbar">
+          {tabData.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => handleTabClick(tab.id)}
+              className={`relative px-4 lg:px-6 py-3 flex items-center gap-2 text-xs lg:text-sm font-bold whitespace-nowrap rounded-2xl transition-colors outline-none ${
+                activeTab === tab.id 
+                  ? "text-accent" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-black/5"
+              }`}
+            >
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeTabBackground"
+                  className="absolute inset-0 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-r border-white/60 rounded-2xl pointer-events-none"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-2">
+                {tab.icon}
+                {tab.label}
+                {tab.badge && (
+                  <span className="ml-1.5 px-2 py-0.5 rounded-full bg-accent text-white text-[10px] font-black leading-none flex items-center justify-center">
+                    {tab.badge}
+                  </span>
+                )}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 3. Tab Content Area */}
@@ -485,36 +684,84 @@ const SpecItem = ({ icon, label, value }: any) => (
   </div>
 )
 
-const HierarchyItem = ({ level, label, value, highlight = false }: any) => (
-  <div className="flex items-center relative">
-    {level > 0 && (
-      <div className="absolute left-[11px] -top-6 bottom-4 w-px bg-[#A3B1C6]/30"></div>
-    )}
-    {level > 0 && (
-      <div className="absolute left-[11px] top-4 w-6 h-px bg-[#A3B1C6]/30"></div>
-    )}
-    <div className={`flex items-center gap-4 w-full ${level > 0 ? 'ml-8' : ''}`}>
-      <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 ${highlight ? 'bg-accent shadow-[0_0_10px_rgba(108,99,255,0.5)]' : 'bg-background shadow-neu-extruded border border-white/50'}`}>
-        <div className={`w-2 h-2 rounded-full ${highlight ? 'bg-white' : 'bg-accent'}`}></div>
-      </div>
-      <div className="flex items-center justify-between gap-4 flex-1 bg-background shadow-neu-extruded border-neu rounded-xl p-4 min-w-0">
-        <span className="text-sm font-bold text-muted-foreground shrink-0">{label}</span>
-        <span className={`text-sm font-bold text-right truncate ${highlight ? 'text-accent' : 'text-foreground'}`}>{value}</span>
+const HierarchyItem = ({ level, label, value, highlight = false }: any) => {
+  // Calculate indent: level 0 = 0px, level 1 = 24px, level 2 = 48px...
+  const indent = level * 24;
+  
+  return (
+    <div className="flex items-center relative w-full h-8" style={{ paddingLeft: `${indent}px` }}>
+      {/* Vertical line connecting to parent */}
+      {level > 0 && (
+        <div 
+          className="absolute w-px bg-[#A3B1C6]/80" 
+          style={{ 
+            left: `${indent - 24 + 11.5}px`, 
+            top: '-40px', // Goes up through space-y-6 (24px) + half of h-8 (16px) = 40px
+            bottom: '50%' 
+          }}
+        ></div>
+      )}
+      
+      {/* Horizontal line connecting from vertical line to current dot */}
+      {level > 0 && (
+        <div 
+          className="absolute h-px bg-[#A3B1C6]/80" 
+          style={{ 
+            left: `${indent - 24 + 11.5}px`, 
+            top: '50%', 
+            width: '12.5px' 
+          }}
+        ></div>
+      )}
+      
+      <div className="flex items-center gap-3 w-full min-w-0">
+        {/* The Dot */}
+        <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 z-10 ${highlight ? 'bg-accent shadow-[0_0_10px_rgba(108,99,255,0.5)]' : 'bg-[#E4E9F2] shadow-neu-inset border border-white/50'}`}>
+          <div className={`w-2 h-2 rounded-full ${highlight ? 'bg-white' : 'bg-accent'}`}></div>
+        </div>
+        
+        {/* Simple Text with flex-wrap so it doesn't get squished */}
+        <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
+          <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">{label}:</span>
+          <span className={`text-sm font-extrabold truncate ${highlight ? 'text-accent drop-shadow-sm' : 'text-foreground'}`}>{value}</span>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
-const DocCard = ({ title, type, date, size }: any) => (
-  <div className="p-6 bg-background shadow-neu-extruded border-neu rounded-3xl flex flex-col items-center text-center group cursor-pointer hover:shadow-neu-inset hover:-translate-y-1 transition-all">
-    <div className="w-16 h-16 bg-background shadow-neu-extruded border-neu rounded-2xl flex items-center justify-center mb-4 text-accent group-hover:shadow-neu-inset">
-      <FileText className="w-8 h-8" />
+const DocCard = ({ title, type, date, size }: any) => {
+  const isImage = type === 'JPG' || type === 'PNG';
+  const Icon = isImage ? ImageIcon : (type === 'XLS' ? FileSpreadsheet : FileText);
+  const colorClass = isImage ? 'text-green-500' : (type === 'XLS' ? 'text-emerald-500' : 'text-accent');
+
+  return (
+    <div className="p-5 bg-background shadow-neu-extruded border-neu rounded-[24px] flex flex-col group transition-all hover:shadow-neu-inset hover:-translate-y-1">
+      <div className="flex items-start justify-between mb-4">
+        <div className={`w-12 h-12 bg-background shadow-neu-extruded border-neu rounded-2xl flex items-center justify-center ${colorClass}`}>
+          <Icon className="w-6 h-6" />
+        </div>
+        <div className="flex gap-2">
+          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-black/5 hover:text-accent"><Eye className="w-4 h-4" /></Button>
+          <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg hover:bg-black/5 hover:text-accent"><Download className="w-4 h-4" /></Button>
+        </div>
+      </div>
+      
+      <div className="flex-1">
+        <h4 className="font-bold text-foreground text-sm mb-1 line-clamp-1" title={title}>{title}</h4>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="px-2 py-0.5 bg-[#A3B1C6]/10 text-muted-foreground text-[10px] font-bold rounded uppercase tracking-wider">{type}</span>
+          <span className="text-xs font-semibold text-muted-foreground">{size}</span>
+        </div>
+      </div>
+      
+      <div className="pt-4 border-t border-[#A3B1C6]/20 flex items-center justify-between">
+        <span className="text-xs font-semibold text-muted-foreground">{date}</span>
+        <Button variant="ghost" size="icon" className="w-8 h-8 rounded-lg text-red-500 hover:text-red-600 hover:bg-red-500/10"><Trash2 className="w-4 h-4" /></Button>
+      </div>
     </div>
-    <h4 className="font-bold text-foreground mb-1">{title}</h4>
-    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">{type} • {size}</p>
-    <Button variant="outline" className="w-full text-xs h-8 shadow-neu-extruded border-neu font-bold text-muted-foreground hover:text-accent">Download</Button>
-  </div>
-)
+  )
+}
 
 const TimelineItem = ({ icon, title, date, desc }: any) => (
   <div className="flex gap-6">

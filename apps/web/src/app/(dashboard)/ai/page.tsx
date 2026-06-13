@@ -7,6 +7,7 @@ import { Input } from"@/components/ui/input"
 import { Sparkles, Send, Bot, User } from"lucide-react"
 import { useAuthStore } from"@/lib/store"
 import { fetchApi } from"@/lib/api"
+import { HeroSection } from "@/components/ui/hero-section"
 
 type Message = {
   id: string
@@ -68,10 +69,12 @@ export default function AIPage() {
 
   return (
     <div className="space-y-6 h-[calc(100vh-8rem)] flex flex-col">
-      <div className="flex items-center gap-3 shrink-0">
-        <Sparkles className="text-purple-500" size={32} />
-        <h1 className="text-3xl font-bold tracking-tight text-white">Smart Assistant</h1>
-      </div>
+      <HeroSection
+        title="Smart Assistant"
+        description="Powered by Data Center LLM"
+        imageSrc="/images/heroes/ai.png"
+        className="shrink-0"
+      />
       
       <Card className="flex-1 flex flex-col overflow-hidden shadow-2xl">
         <CardHeader className="-b  /50 pb-4 shrink-0">

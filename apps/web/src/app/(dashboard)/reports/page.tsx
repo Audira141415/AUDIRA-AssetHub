@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
 import { FileDown, Database, ActivitySquare } from"lucide-react"
+import { HeroSection } from "@/components/ui/hero-section"
 
 export default function ReportsPage() {
   const handleDownload = (endpoint: string, filename: string) => {
@@ -16,10 +17,11 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <FileDown className="text-blue-500" size={32} />
-        <h1 className="text-3xl font-bold tracking-tight text-white">Reports & Exports</h1>
-      </div>
+      <HeroSection
+        title="Reports & Exports"
+        description="Download your data securely"
+        imageSrc="/images/heroes/reports.png"
+      />
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="hover: transition-colors">

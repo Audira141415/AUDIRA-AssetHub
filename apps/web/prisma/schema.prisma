@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String?
+  role      String   @default("Operator")
+  status    String   @default("Active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vendor {
+  id        String   @id @default(cuid())
+  name      String
+  type      String
+  email     String?
+  phone     String?
+  status    String   @default("Active")
+  assets    Asset[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  code        String
+  description String?
+  assets      Asset[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  name      String
+  type      String   // "Site", "Building", "Floor", "Room"
+  parentLoc String?  // Optional parent ID
+  assets    Asset[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Asset {
+  id         String   @id @default(cuid())
+  tag        String   @unique
+  hostname   String?
+  status     String   @default("Active")
+  
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  
+  locationId String?
+  location   Location? @relation(fields: [locationId], references: [id])
+  
+  vendorId   String?
+  vendor     Vendor?   @relation(fields: [vendorId], references: [id])
+  
+  warranty   String?
+  rack       String?
+  uPosition  String?
+  
+  // Financial Fields
+  purchaseCost    Float?
+  purchaseDate    DateTime?
+  salvageValue    Float?
+  usefulLifeYears Int?
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  tickets    Ticket[]
+  movements  Movement[]
+  ips        IPAddress[]
+}
+
+model Ticket {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  priority    String   @default("Medium")
+  status      String   @default("Open")
+  type        String   @default("Repair")
+  
+  assetId     String?
+  asset       Asset?   @relation(fields: [assetId], references: [id])
+  
+  reportedBy  String?
+  assignedTo  String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Movement {
+  id          String   @id @default(cuid())
+  
+  assetId     String
+  asset       Asset    @relation(fields: [assetId], references: [id])
+  
+  fromLoc     String?
+  toLoc       String?
+  
+  date        DateTime @default(now())
+  user        String   @default("System User")
+  notes       String?
+}
+
+model Subnet {
+  id          String   @id @default(cuid())
+  name        String
+  cidr        String   @unique
+  vlan        Int?
+  description String?
+  ips         IPAddress[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model IPAddress {
+  id          String   @id @default(cuid())
+  address     String   @unique
+  status      String   @default("Available") // Available, Reserved, Active
+  
+  subnetId    String
+  subnet      Subnet   @relation(fields: [subnetId], references: [id])
+  
+  assetId     String?
+  asset       Asset?   @relation(fields: [assetId], references: [id])
+  
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

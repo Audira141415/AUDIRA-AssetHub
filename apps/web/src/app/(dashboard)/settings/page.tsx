@@ -20,6 +20,7 @@ import {
   Database,
   TerminalSquare
 } from "lucide-react"
+import { HeroSection } from "@/components/ui/hero-section"
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("General")
@@ -50,16 +51,11 @@ export default function SettingsPage() {
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         
         {/* Breadcrumb & Header */}
-        <div className="flex flex-col mb-6 gap-2">
-          <div className="flex flex-wrap items-center text-xs text-muted-foreground font-medium">
-            <SettingsIcon size={12} className="mr-1" />
-            <span>Management</span>
-            <ChevronRight size={12} className="mx-1" />
-            <span className="text-foreground font-bold">Settings</span>
-          </div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Settings</h1>
-          <p className="text-sm text-muted-foreground font-medium">Manage your system preferences and configurations</p>
-        </div>
+        <HeroSection
+          title="Settings"
+          description="Manage your system preferences and configurations"
+          imageSrc="/images/heroes/settings.png"
+        />
 
         {/* Tabs */}
         <div className="flex border-b border-[#A3B1C6]/30 mb-6 overflow-x-auto [&::-webkit-scrollbar]:hidden">

@@ -2,35 +2,30 @@
 
 import { useEffect, useState } from"react"
 import { useRouter } from"next/navigation"
-import { useAuthStore } from"@/lib/store"
-import { Sidebar } from"@/components/layout/Sidebar"
-import { Header } from"@/components/layout/Header"
+import { useSession } from "next-auth/react"
+import { Sidebar } from "@/components/layout/Sidebar"
+import { Header } from "@/components/layout/Header"
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const token = useAuthStore((state) => state.token)
+  const { data: session, status } = useSession()
   const router = useRouter()
-  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (isMounted && !token) {
+    if (status === "unauthenticated") {
       router.push("/login")
     }
-  }, [isMounted, token, router])
+  }, [status, router])
 
-  if (!isMounted) {
-    return null
+  if (status === "loading") {
+    return <div className="flex items-center justify-center h-screen text-muted-foreground font-bold">Checking credentials...</div>
   }
 
-  if (!token) {
-    return <div className="flex items-center justify-center h-screen  text-muted-foreground">Redirecting to login...</div>
+  if (status === "unauthenticated" || !session) {
+    return <div className="flex items-center justify-center h-screen text-muted-foreground font-bold">Redirecting to login...</div>
   }
 
   return (

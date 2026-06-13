@@ -6,6 +6,11 @@ interface User {
   email: string
   full_name: string | null
   role_id: number | null
+  role?: {
+    id: number;
+    name: string;
+  } | null;
+  is_superuser?: boolean;
   is_active: boolean
 }
 

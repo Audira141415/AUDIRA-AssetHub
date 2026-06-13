@@ -3,6 +3,7 @@
 import { useQuery } from"@tanstack/react-query"
 import { fetchApi } from"@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { HeroSection } from "@/components/ui/hero-section"
 
 export default function LocationsPage() {
   const { data: sites, isLoading } = useQuery({
@@ -12,7 +13,11 @@ export default function LocationsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Locations</h1>
+      <HeroSection
+        title="Locations"
+        description="Manage your data center sites and properties."
+        imageSrc="/images/heroes/locations.png"
+      />
       
       <Card className="">
         <CardHeader>

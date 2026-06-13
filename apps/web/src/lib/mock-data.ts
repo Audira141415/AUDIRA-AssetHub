@@ -12,28 +12,42 @@ export function getAssetImage(category: string): string {
   // Power
   if (cat.includes("battery")) return "/images/assets/battery.png";
   if (cat.includes("pdu")) return "/images/assets/pdu.png";
-  if (cat.includes("mdp") || cat.includes("panel")) return "/images/assets/mdp.png";
+  if (cat.includes("ats")) return "/images/assets/ats.png";
+  if (cat.includes("rectifier")) return "/images/assets/rectifier.png";
+  if (cat.includes("mdp") || cat.includes("main distribution")) return "/images/assets/mdp.png";
+  if (cat.includes("input") || cat.includes("output") || cat.includes("iop") || cat.includes("panel")) return "/images/assets/iop.png";
   if (cat.includes("generator") || cat.includes("genset")) return "/images/assets/genset.png";
-  if (cat.includes("ups") || cat.includes("ats") || cat.includes("rectifier")) return "/images/assets/ups.png";
+  if (cat.includes("ups")) return "/images/assets/ups.png";
   
   // HVAC
-  if (cat.includes("humidifier")) return "/images/assets/humidifier.png";
-  if (cat.includes("ac split") || cat.includes("ac standing")) return "/images/assets/pac.png";
-  if (cat.includes("pac") || cat.includes("cooling") || cat.includes("chiller")) return "/images/assets/pac.png";
+  if (cat.includes("humidifier") || cat.includes("dehumidifier")) return "/images/assets/humidifier.png";
+  if (cat.includes("chiller")) return "/images/assets/chiller.png";
+  if (cat.includes("in-row") || cat.includes("row")) return "/images/assets/in_row.png";
+  if (cat.includes("standing") || cat.includes("comfort")) return "/images/assets/ac_standing.png";
+  if (cat.includes("split") || cat.includes("wall")) return "/images/assets/ac_wall.png";
+  if (cat.includes("pac") || cat.includes("crac") || cat.includes("cooling")) return "/images/assets/pac.png";
   
   // Security & Safety
   if (cat.includes("nvr") || cat.includes("dvr")) return "/images/assets/nvr.png";
   if (cat.includes("door") || cat.includes("biometric")) return "/images/assets/biometric.png";
   if (cat.includes("board")) return "/images/assets/controller.png";
   if (cat.includes("alarm")) return "/images/assets/alarm.png";
-  if (cat.includes("fire")) return "/images/assets/fm200.png";
+  if (cat.includes("vesda")) return "/images/assets/vesda.png";
+  if (cat.includes("photoelectric")) return "/images/assets/photoelectric.png";
+  if (cat.includes("smoke") || cat.includes("detector")) return "/images/assets/detector.png";
+  if (cat.includes("fss control panel")) return "/images/assets/fss_panel.png";
+  if (cat.includes("cylinder")) return "/images/assets/cylinder.png";
+  if (cat.includes("fire") || cat.includes("fss")) return "/images/assets/fm200.png";
   if (cat.includes("turnstile") || cat.includes("flap")) return "/images/assets/turnstile.png";
   if (cat.includes("cctv") || cat.includes("camera") || cat.includes("access controller")) return "/images/assets/cctv.png";
   
   // Network & Misc
   if (cat.includes("access point")) return "/images/assets/access_point.png";
   if (cat.includes("san switch")) return "/images/assets/san_switch.png";
-  if (cat.includes("switch") || cat.includes("network") || cat.includes("transceiver") || cat.includes("odf") || cat.includes("sensor")) return "/images/assets/switch.png";
+  if (cat.includes("odf") || cat.includes("optical")) return "/images/assets/odf.png";
+  if (cat.includes("transceiver") || cat.includes("sfp")) return "/images/assets/transceiver.png";
+  if (cat.includes("sensor")) return "/images/assets/sensor.png";
+  if (cat.includes("switch") || cat.includes("network")) return "/images/assets/switch.png";
   if (cat.includes("server")) return "/images/assets/server.png";
   
   return "/images/assets/server.png";
@@ -79,41 +93,107 @@ export function updateAssetLocation(tag: string, site: string, building: string,
 }
 
 export const baseAssets = [
-  { id: 1, tag: "SRV-2026-001", host: "SRV-PROD-01", cat: "Server", loc: "Batam DC", rack: "R01", u: "24", status: "Active", warranty: "2028", vendor: "Dell" },
-  { id: 2, tag: "STR-2026-001", host: "SAN-PROD-01", cat: "Storage Array", loc: "Batam DC", rack: "R01", u: "10", status: "Active", warranty: "2027", vendor: "NetApp" },
-  { id: 3, tag: "MF-2026-001", host: "IBM-Z16", cat: "Mainframe", loc: "Jakarta DC", rack: "M01", u: "ALL", status: "Active", warranty: "2030", vendor: "IBM" },
-  { id: 4, tag: "RCK-S-001", host: "RACK-SRV-01", cat: "Server Rack", loc: "Batam DC", rack: "R01", u: "ALL", status: "Active", warranty: "Lifetime", vendor: "APC" },
-  { id: 5, tag: "RCK-N-001", host: "RACK-NET-01", cat: "Network Rack", loc: "Batam DC", rack: "N01", u: "ALL", status: "Active", warranty: "Lifetime", vendor: "APC" },
-  { id: 6, tag: "SW-2026-001", host: "SW-CORE-01", cat: "Network Switch", loc: "Batam DC", rack: "N01", u: "40", status: "Active", warranty: "2026", vendor: "Cisco" },
-  { id: 7, tag: "RT-2026-001", host: "RT-EDGE-01", cat: "Router", loc: "Batam DC", rack: "N01", u: "38", status: "Maintenance", warranty: "2026", vendor: "Juniper" },
-  { id: 8, tag: "FW-2026-001", host: "FW-MAIN-01", cat: "Firewall / Security", loc: "Batam DC", rack: "N01", u: "36", status: "Active", warranty: "2025", vendor: "Palo Alto" },
-  { id: 9, tag: "SSW-2026-001", host: "SAN-SW-01", cat: "SAN Switch", loc: "Batam DC", rack: "N01", u: "34", status: "Active", warranty: "2027", vendor: "Brocade" },
-  { id: 10, tag: "AP-2026-001", host: "AP-ROOF-01", cat: "Wireless Access Point", loc: "Batam DC", rack: "Roof", u: "-", status: "Active", warranty: "2026", vendor: "Aruba" },
-  { id: 11, tag: "SFP-2026-001", host: "N/A", cat: "Transceiver / SFP", loc: "Batam DC", rack: "N01", u: "P1", status: "Active", warranty: "2025", vendor: "Cisco" },
-  { id: 12, tag: "ODF-2026-001", host: "ODF-MAIN", cat: "Optical Distribution Frame (ODF)", loc: "Batam DC", rack: "N01", u: "42", status: "Active", warranty: "Lifetime", vendor: "Corning" },
-  { id: 13, tag: "UPS-2026-001", host: "UPS-SYS-A", cat: "UPS (Main Unit)", loc: "Batam DC", rack: "PWR1", u: "ALL", status: "Active", warranty: "2029", vendor: "Schneider" },
-  { id: 14, tag: "BAT-2026-001", host: "BAT-BANK-A1", cat: "UPS Battery Bank", loc: "Batam DC", rack: "PWR1", u: "ALL", status: "Active", warranty: "2027", vendor: "Schneider" },
-  { id: 15, tag: "PDU-2026-001", host: "PDU-R01-A", cat: "PDU (Rack / Floor)", loc: "Batam DC", rack: "R01", u: "VERT", status: "Active", warranty: "2028", vendor: "Raritan" },
-  { id: 16, tag: "MDP-2026-001", host: "MDP-MAIN", cat: "MDP (Main Distribution Panel)", loc: "Batam DC", rack: "ELEC", u: "-", status: "Active", warranty: "2035", vendor: "Siemens" },
-  { id: 17, tag: "IOP-2026-001", host: "IOP-R01", cat: "Input / Output Panel", loc: "Batam DC", rack: "ELEC", u: "-", status: "Active", warranty: "2035", vendor: "Siemens" },
-  { id: 18, tag: "ATS-2026-001", host: "ATS-MAIN", cat: "ATS / STS", loc: "Batam DC", rack: "ELEC", u: "-", status: "Active", warranty: "2030", vendor: "Eaton" },
-  { id: 19, tag: "GEN-2026-001", host: "GENSET-1", cat: "Generator Set (Genset)", loc: "Batam DC", rack: "OUT", u: "-", status: "Maintenance", warranty: "2035", vendor: "Caterpillar" },
-  { id: 20, tag: "REC-2026-001", host: "REC-DC-01", cat: "Rectifier / Inverter", loc: "Batam DC", rack: "PWR2", u: "ALL", status: "Active", warranty: "2028", vendor: "Vertiv" },
-  { id: 21, tag: "PAC-2026-001", host: "CRAC-01", cat: "PAC / CRAC Unit", loc: "Batam DC", rack: "FLR", u: "-", status: "Active", warranty: "2029", vendor: "Stulz" },
-  { id: 22, tag: "ACS-2026-001", host: "AC-STAND-01", cat: "AC Standing (Precision/Comfort)", loc: "Jakarta DC", rack: "FLR", u: "-", status: "Active", warranty: "2026", vendor: "Daikin" },
-  { id: 23, tag: "ACW-2026-001", host: "AC-WALL-01", cat: "AC Split Wall", loc: "Jakarta DC", rack: "WALL", u: "-", status: "Active", warranty: "2025", vendor: "Panasonic" },
-  { id: 24, tag: "IRC-2026-001", host: "IRC-R01-R02", cat: "In-Row Cooling", loc: "Batam DC", rack: "ROW-A", u: "ALL", status: "Active", warranty: "2028", vendor: "APC" },
-  { id: 25, tag: "CHL-2026-001", host: "CHILLER-01", cat: "Chiller", loc: "Batam DC", rack: "ROOF", u: "-", status: "Active", warranty: "2035", vendor: "Trane" },
-  { id: 26, tag: "ENS-2026-001", host: "TEMP-SENS-01", cat: "Environmental Sensor", loc: "Batam DC", rack: "R01", u: "TOP", status: "Active", warranty: "2025", vendor: "NetBotz" },
-  { id: 27, tag: "HUM-2026-001", host: "HUMID-01", cat: "Humidifier / Dehumidifier", loc: "Batam DC", rack: "FLR", u: "-", status: "Active", warranty: "2027", vendor: "Condair" },
-  { id: 28, tag: "CAM-2026-001", host: "CAM-AISLE-A", cat: "CCTV Camera", loc: "Batam DC", rack: "CEIL", u: "-", status: "Active", warranty: "2026", vendor: "Axis" },
-  { id: 29, tag: "NVR-2026-001", host: "NVR-MAIN-01", cat: "NVR / DVR System", loc: "Batam DC", rack: "SEC1", u: "10", status: "Active", warranty: "2028", vendor: "Hikvision" },
-  { id: 30, tag: "ACC-2026-001", host: "DOOR-MAIN-BIO", cat: "Access Door / Biometric", loc: "Batam DC", rack: "DOOR1", u: "-", status: "Active", warranty: "2027", vendor: "Suprema" },
-  { id: 31, tag: "ACB-2026-001", host: "CTRL-DOOR-1", cat: "Access Controller Board", loc: "Batam DC", rack: "SEC1", u: "8", status: "Active", warranty: "2028", vendor: "HID" },
-  { id: 32, tag: "ALM-2026-001", host: "ALARM-PANEL", cat: "Alarm System", loc: "Batam DC", rack: "WALL", u: "-", status: "Active", warranty: "2029", vendor: "Bosch" },
-  { id: 33, tag: "FSS-2026-001", host: "FM200-CYL-1", cat: "Fire Suppression System (FM200/Novec/Argonite)", loc: "Batam DC", rack: "FLR", u: "-", status: "Offline", warranty: "2030", vendor: "Kidde" },
-  { id: 34, tag: "TRN-2026-001", host: "TURNSTILE-IN", cat: "Turnstile / Flap Barrier", loc: "Batam DC", rack: "LOBBY", u: "-", status: "Active", warranty: "2027", vendor: "Gunnebo" },
+  { id: 1, tag: "SRV-2026-001", host: "SRV-PROD-01", cat: "Server", loc: "Batam DC", room: "Server Room A", rack: "R01", u: "24", status: "Active", warranty: "2028", vendor: "Dell" },
+  { id: 2, tag: "STR-2026-001", host: "SAN-PROD-01", cat: "Storage Array", loc: "Batam DC", room: "Server Room A", rack: "R01", u: "10", status: "Active", warranty: "2027", vendor: "NetApp" },
+  { id: 3, tag: "MF-2026-001", host: "IBM-Z16", cat: "Mainframe", loc: "Jakarta DC", room: "Main Hall", rack: "Floor", u: "-", status: "Active", warranty: "2030", vendor: "IBM" },
+  { id: 4, tag: "RCK-S-001", host: "RACK-SRV-01", cat: "Server Rack", loc: "Batam DC", room: "Server Room A", rack: "Floor", u: "-", status: "Active", warranty: "Lifetime", vendor: "APC" },
+  { id: 5, tag: "RCK-N-001", host: "RACK-NET-01", cat: "Network Rack", loc: "Batam DC", room: "Network Room", rack: "Floor", u: "-", status: "Active", warranty: "Lifetime", vendor: "APC" },
+  { id: 6, tag: "SW-2026-001", host: "SW-CORE-01", cat: "Network Switch", loc: "Batam DC", room: "Network Room", rack: "N01", u: "40", status: "Active", warranty: "2026", vendor: "Cisco" },
+  { id: 7, tag: "RT-2026-001", host: "RT-EDGE-01", cat: "Router", loc: "Batam DC", room: "Network Room", rack: "N01", u: "38", status: "Maintenance", warranty: "2026", vendor: "Juniper" },
+  { id: 8, tag: "FW-2026-001", host: "FW-MAIN-01", cat: "Firewall / Security", loc: "Batam DC", room: "Network Room", rack: "N01", u: "36", status: "Active", warranty: "2025", vendor: "Palo Alto" },
+  { id: 9, tag: "SSW-2026-001", host: "SAN-SW-01", cat: "SAN Switch", loc: "Batam DC", room: "Server Room A", rack: "R01", u: "34", status: "Active", warranty: "2027", vendor: "Brocade" },
+  { id: 10, tag: "AP-2026-001", host: "AP-ROOF-01", cat: "Wireless Access Point", loc: "Batam DC", room: "Office/Support Room", rack: "Ceiling", u: "-", status: "Active", warranty: "2026", vendor: "Aruba" },
+  { id: 11, tag: "SFP-2026-001", host: "N/A", cat: "Transceiver / SFP", loc: "Batam DC", room: "Network Room", rack: "N01", u: "-", status: "Active", warranty: "2025", vendor: "Cisco" },
+  { id: 12, tag: "ODF-2026-001", host: "ODF-MAIN", cat: "Optical Distribution Frame (ODF)", loc: "Batam DC", room: "Network Room", rack: "N01", u: "42", status: "Active", warranty: "Lifetime", vendor: "Corning" },
+  { id: 13, tag: "UPS-2026-001", host: "UPS-SYS-A", cat: "UPS (Main Unit)", loc: "Batam DC", room: "Power Room", rack: "Floor", u: "-", status: "Active", warranty: "2029", vendor: "Schneider" },
+  { id: 14, tag: "BAT-2026-001", host: "BAT-BANK-A1", cat: "UPS Battery Bank", loc: "Batam DC", room: "Power Room", rack: "Floor", u: "-", status: "Active", warranty: "2027", vendor: "Schneider" },
+  { id: 15, tag: "PDU-2026-001", host: "PDU-R01-A", cat: "PDU (Rack / Floor)", loc: "Batam DC", room: "Server Room A", rack: "R01", u: "VERT", status: "Active", warranty: "2028", vendor: "Raritan" },
+  { id: 16, tag: "MDP-2026-001", host: "MDP-MAIN", cat: "MDP (Main Distribution Panel)", loc: "Batam DC", room: "Power Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2035", vendor: "Siemens" },
+  { id: 17, tag: "PIU-2026-001", host: "PANEL-IN-UPS", cat: "Panel Input UPS", loc: "Batam DC", room: "Power Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2035", vendor: "Siemens" },
+  { id: 18, tag: "ATS-2026-001", host: "ATS-MAIN", cat: "ATS / STS", loc: "Batam DC", room: "Power Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2030", vendor: "Eaton" },
+  { id: 19, tag: "GEN-2026-001", host: "GENSET-1", cat: "Generator Set (Genset)", loc: "Batam DC", room: "Utility Yard", rack: "Pad", u: "-", status: "Maintenance", warranty: "2035", vendor: "Caterpillar" },
+  { id: 20, tag: "REC-2026-001", host: "REC-DC-01", cat: "Rectifier / Inverter", loc: "Batam DC", room: "Power Room", rack: "Floor", u: "-", status: "Active", warranty: "2028", vendor: "Vertiv" },
+  { id: 21, tag: "PAC-2026-001", host: "CRAC-01", cat: "PAC / CRAC Unit", loc: "Batam DC", room: "Server Room A", rack: "Floor", u: "-", status: "Active", warranty: "2029", vendor: "Stulz" },
+  { id: 22, tag: "ACS-2026-001", host: "AC-STAND-01", cat: "AC Standing (Precision/Comfort)", loc: "Jakarta DC", room: "Network Room", rack: "Floor", u: "-", status: "Active", warranty: "2026", vendor: "Daikin" },
+  { id: 23, tag: "ACW-2026-001", host: "AC-WALL-01", cat: "AC Split Wall", loc: "Jakarta DC", room: "Office/Support Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2025", vendor: "Panasonic" },
+  { id: 24, tag: "IRC-2026-001", host: "IRC-R01-R02", cat: "In-Row Cooling", loc: "Batam DC", room: "Server Room A", rack: "Row A", u: "-", status: "Active", warranty: "2028", vendor: "APC" },
+  { id: 25, tag: "CHL-2026-001", host: "CHILLER-01", cat: "Chiller", loc: "Batam DC", room: "Roof Platform", rack: "Pad", u: "-", status: "Active", warranty: "2035", vendor: "Trane" },
+  { id: 26, tag: "ENS-2026-001", host: "TEMP-SENS-01", cat: "Environmental Sensor", loc: "Batam DC", room: "Server Room A", rack: "R01", u: "TOP", status: "Active", warranty: "2025", vendor: "NetBotz" },
+  { id: 27, tag: "HUM-2026-001", host: "HUMID-01", cat: "Humidifier / Dehumidifier", loc: "Batam DC", room: "Server Room A", rack: "Floor", u: "-", status: "Active", warranty: "2027", vendor: "Condair" },
+  { id: 28, tag: "CAM-2026-001", host: "CAM-AISLE-A", cat: "CCTV Camera", loc: "Batam DC", room: "Server Room A", rack: "Ceiling", u: "-", status: "Active", warranty: "2026", vendor: "Axis" },
+  { id: 29, tag: "NVR-2026-001", host: "NVR-MAIN-01", cat: "NVR / DVR System", loc: "Batam DC", room: "Security Room", rack: "SEC-R1", u: "10", status: "Active", warranty: "2028", vendor: "Hikvision" },
+  { id: 30, tag: "ACC-2026-001", host: "DOOR-MAIN-BIO", cat: "Access Door / Biometric", loc: "Batam DC", room: "Lobby", rack: "Wall Mount", u: "-", status: "Active", warranty: "2027", vendor: "Suprema" },
+  { id: 31, tag: "ACB-2026-001", host: "CTRL-DOOR-1", cat: "Access Controller Board", loc: "Batam DC", room: "Security Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2028", vendor: "HID" },
+  { id: 32, tag: "ALM-2026-001", host: "ALARM-PANEL", cat: "Alarm System", loc: "Batam DC", room: "Security Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2029", vendor: "Bosch" },
+  { id: 33, tag: "FSS-2026-001", host: "FM200-PANEL", cat: "FSS Control Panel", loc: "Batam DC", room: "FSS Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2030", vendor: "Kidde" },
+  { id: 34, tag: "TRN-2026-001", host: "TURNSTILE-IN", cat: "Turnstile / Flap Barrier", loc: "Batam DC", room: "Lobby", rack: "Floor", u: "-", status: "Active", warranty: "2027", vendor: "Gunnebo" },
+  { id: 35, tag: "POU-2026-001", host: "PANEL-OUT-UPS", cat: "Panel Output UPS", loc: "Batam DC", room: "Power Room", rack: "Wall Mount", u: "-", status: "Active", warranty: "2035", vendor: "Siemens" },
+  { id: 36, tag: "PPC-2026-001", host: "PANEL-PAC-01", cat: "Panel PAC", loc: "Batam DC", room: "Server Room A", rack: "Wall Mount", u: "-", status: "Active", warranty: "2035", vendor: "Schneider" },
+  { id: 37, tag: "PDB-2026-001", host: "PANEL-PDU-01", cat: "Panel PDU", loc: "Batam DC", room: "Server Room A", rack: "Wall Mount", u: "-", status: "Active", warranty: "2035", vendor: "Schneider" },
+  { id: 38, tag: "FSC-2026-001", host: "FM200-CYL-1", cat: "Fire Suppression Cylinder", loc: "Batam DC", room: "FSS Room", rack: "Floor", u: "-", status: "Active", warranty: "2035", vendor: "Kidde" },
+  { id: 39, tag: "FSC-2026-002", host: "FM200-CYL-2", cat: "Fire Suppression Cylinder", loc: "Batam DC", room: "FSS Room", rack: "Floor", u: "-", status: "Active", warranty: "2035", vendor: "Kidde" },
+  { id: 40, tag: "SMK-2026-001", host: "SMOKE-R01", cat: "Smoke Detector", loc: "Batam DC", room: "Server Room A", rack: "Ceiling", u: "-", status: "Active", warranty: "2028", vendor: "Notifier" },
+  { id: 41, tag: "PHD-2026-001", host: "PHOTO-R01", cat: "Photoelectric Detector", loc: "Batam DC", room: "Server Room A", rack: "Ceiling", u: "-", status: "Active", warranty: "2028", vendor: "Notifier" },
+  { id: 42, tag: "VSD-2026-001", host: "VESDA-MAIN", cat: "VESDA System", loc: "Batam DC", room: "Server Room A", rack: "Wall Mount", u: "-", status: "Active", warranty: "2030", vendor: "Xtralis" },
 ];
+
+const generatedRacks = Array.from({ length: 100 }, (_, i) => ({
+  id: 1000 + i,
+  tag: `RCK-${2018 + (i % 9)}-${(100 + i).toString()}`,
+  host: `RACK-${(i+1).toString().padStart(3, '0')}`,
+  cat: "Server Rack / Cabinet",
+  loc: "Batam DC",
+  room: `Server Room ${i < 50 ? 'A' : 'B'}`,
+  rack: "Floor",
+  u: "-",
+  status: "Active",
+  warranty: "Lifetime",
+  vendor: "APC"
+}));
+
+const generatedServers = Array.from({ length: 100 }, (_, i) => ({
+  id: 2000 + i,
+  tag: `SRV-${2018 + (i % 9)}-${(100 + i).toString()}`,
+  host: `APP-NODE-${(i+1).toString().padStart(3, '0')}`,
+  cat: "Server Node / Chassis",
+  loc: "Batam DC",
+  room: `Server Room ${i < 50 ? 'A' : 'B'}`,
+  rack: `RACK-${(Math.floor(i / 2) + 1).toString().padStart(3, '0')}`,
+  u: (i % 2 === 0) ? "10" : "20",
+  status: "Active",
+  warranty: "2029",
+  vendor: i % 2 === 0 ? "Dell" : "HPE"
+}));
+
+const generatedUPS = Array.from({ length: 2 }, (_, i) => ({
+  id: 3000 + i,
+  tag: `UPS-2026-${(100 + i).toString()}`,
+  host: `UPS-SYS-${i+1}`,
+  cat: "UPS Main Unit",
+  loc: "Batam DC",
+  room: "Power Room",
+  rack: "Floor",
+  u: "-",
+  status: "Active",
+  warranty: "2032",
+  vendor: "Schneider"
+}));
+
+const generatedNVR = Array.from({ length: 2 }, (_, i) => ({
+  id: 4000 + i,
+  tag: `NVR-2026-${(100 + i).toString()}`,
+  host: `NVR-MAIN-${i+1}`,
+  cat: "NVR / DVR System",
+  loc: "Batam DC",
+  room: "Security Room",
+  rack: "SEC-R1",
+  u: (i * 2 + 10).toString(),
+  status: "Active",
+  warranty: "2028",
+  vendor: "Hikvision"
+}));
+
+baseAssets.push(...generatedRacks, ...generatedServers, ...generatedUPS, ...generatedNVR);
 
 export function getFullAssetDetails(tag: string) {
   const base = baseAssets.find(a => a.tag === tag) || baseAssets[0];
@@ -123,11 +203,12 @@ export function getFullAssetDetails(tag: string) {
     tag: base.tag,
     modelDesc: `${base.vendor} Enterprise Edition`,
     status: base.status,
-    locationQuick: `${base.loc} • Rack ${base.rack} ${base.u !== '-' ? '• U' + base.u : ''}`,
+    locationQuick: `${base.loc} • ${base.room} • ${base.rack !== 'Floor' && base.rack !== 'Wall Mount' && base.rack !== 'Pad' && base.rack !== 'Ceiling' ? 'Rack ' + base.rack : base.rack} ${base.u !== '-' ? '• U' + base.u : ''}`,
     hostname: base.host,
     category: base.cat,
     manufacturer: base.vendor,
     model: "Standard Enterprise Model",
+    assetNumber: `02.06.02.${base.id.toString().padStart(3, '0')}`,
     serial: `SN-${base.tag.replace(/[^0-9A-Z]/g, '')}`,
     lifecycle: "Production",
     criticality: "High",
@@ -148,7 +229,7 @@ export function getFullAssetDetails(tag: string) {
     site: base.loc,
     building: "Main Facility",
     floor: "1",
-    room: "Data Hall A",
+    room: base.room,
     rack: base.rack,
     uPosition: parseInt(base.u) || 1,
     warrantyStart: "10 May 2025",
@@ -190,11 +271,53 @@ export function getFullAssetDetails(tag: string) {
     specs.Refrigerant = "R410A";
     specs["Compressor Type"] = "Inverter Scroll";
     specs["Fan Type"] = "EC Motor";
-  } else if (base.cat.includes("CCTV") || base.cat.includes("Access") || base.cat.includes("Security") || base.cat.includes("NVR") || base.cat.includes("Turnstile")) {
+  } else if (base.cat.includes("NVR") || base.cat.includes("DVR")) {
+    specs.Channels = "64-Channel IP Video Input";
+    specs.Decoding = "H.265+ / H.265 / H.264";
+    specs["Storage Capacity"] = "8x SATA interfaces, up to 10TB each";
+    specs.Throughput = "320 Mbps Incoming / 256 Mbps Outgoing";
+    specs["Network Interface"] = "2x RJ-45 10/100/1000 Mbps";
+  } else if (base.cat.includes("Turnstile") || base.cat.includes("Flap")) {
+    specs.Throughput = "35-40 Persons / Minute";
+    specs.Material = "SUS304 Stainless Steel";
+    specs.MCBF = "5,000,000 Cycles (Mean Cycles Between Failure)";
+    specs["Motor Type"] = "Brushless DC Motor";
+    specs.Interface = "RS485 / Dry Contact";
+  } else if (base.cat.includes("Biometric") || base.cat.includes("Door") || base.cat.includes("Access")) {
+    specs.Authentication = "Face / Fingerprint / RFID Card";
+    specs["Template Capacity"] = "10,000 Faces / 50,000 Cards";
+    specs["Recognition Time"] = "< 0.2 seconds";
+    specs.Communication = "TCP/IP, Wiegand, RS485";
+    specs["IP Rating"] = "IP65 (Weatherproof)";
+  } else if (base.cat.includes("Alarm") || base.cat.includes("FSS Panel")) {
+    specs["System Type"] = "Addressable Control Panel";
+    specs.Zones = "16 Configurable Zones";
+    specs.Communication = "TCP/IP, GSM/GPRS Module";
+    specs["Battery Backup"] = "2x 12V 7Ah SLA";
+    specs.Protocol = "Modbus RTU / BACnet IP";
+  } else if (base.cat.includes("Cylinder") || base.cat.includes("Fire Suppression")) {
+    specs["Agent Type"] = "FM-200 (HFC-227ea)";
+    specs["Cylinder Capacity"] = "150 lbs / 68 kg";
+    specs["Operating Pressure"] = "360 psi (25 bar)";
+    specs["Discharge Time"] = "< 10 Seconds";
+    specs["Valve Type"] = "Brass Solenoid Actuated";
+  } else if (base.cat.includes("Detector")) {
+    specs["Detection Type"] = "Optical Photoelectric / Ionization";
+    specs.Sensitivity = "0.5% - 2.0% obs/ft";
+    specs["Coverage Area"] = "900 sq.ft (83 sq.m)";
+    specs["Operating Voltage"] = "24V DC";
+    specs["Alarm Current"] = "50mA";
+  } else if (base.cat.includes("VESDA")) {
+    specs["Detection Technology"] = "Laser-based Aspiration";
+    specs["Pipe Length"] = "Up to 200m total";
+    specs["Sensitivity Range"] = "0.005% - 20% obs/m";
+    specs["Area Coverage"] = "Up to 2,000 sq.m";
+    specs.Communication = "Modbus / Ethernet";
+  } else if (base.cat.includes("CCTV") || base.cat.includes("Camera")) {
     specs.Resolution = "4K Ultra HD (8MP)";
     specs.Connectivity = "PoE (Power over Ethernet)";
     specs["Field of View"] = "120 Degree Wide Angle";
-    specs.Storage = "NVR Connected";
+    specs.Storage = "NVR Connected / MicroSD Edge";
     specs.Firmware = "v2.0.1 (Latest)";
   } else {
     // Fallback generic physical
@@ -726,6 +849,37 @@ export const mockSites = [
   }
 ];
 
+// Array of 20 Indonesian Cities for Data Centers
+const indoCities = [
+  "Medan", "Palembang", "Pekanbaru", "Padang", "Bandar Lampung",
+  "Bogor", "Depok", "Tangerang", "Bekasi", "Cirebon",
+  "Semarang", "Yogyakarta", "Surakarta", "Malang", "Sidoarjo",
+  "Denpasar", "Mataram", "Balikpapan", "Makassar", "Manado"
+];
+
+// Generate 20 more mock sites to reach 26 total locations
+const additionalSites = indoCities.map((city, i) => ({
+  id: `s-mock-${i}`,
+  name: `${city} Data Center`,
+  type: i % 3 === 0 ? "Regional Core Data Center" : "Edge Data Center",
+  code: `${city.substring(0, 3).toUpperCase()}-DC-01`,
+  country: "Indonesia",
+  city: city,
+  address: `Jl. Teknologi No. ${i + 1}\n${city}, Indonesia\nZip ${10000 + (i * 123)}`,
+  timezone: i >= 17 ? "WITA (UTC+8)" : "WIB (UTC+7)",
+  status: i % 8 === 0 ? "Maintenance" : "Active",
+  established: `10 ${['Jan', 'Mar', 'Jun', 'Sep', 'Nov'][i % 5]} 202${i % 5}`,
+  totalAssets: 50 + (i * 24),
+  powerCapacity: (100 + i * 50).toString(),
+  totalArea: (200 + i * 100).toString(),
+  pue: "1." + (40 + (i % 20)).toString(),
+  description: `Facility located in the growing tech hub of ${city}.`,
+  capacity: { power: 10 + (i % 80), space: 20 + (i % 70), cooling: 30 + (i % 60) },
+  color: ['#007DB8', '#049FD9', '#3DCD58', '#8B5CF6', '#EF4444', '#F59E0B'][i % 6]
+}));
+
+mockSites.push(...additionalSites);
+
 export const mockBuildings = [
   { 
     id: "1", name: "Building A", subtitle: "Primary Building", desc: "Primary building for critical IT infrastructure with N+1 power and cooling design.", 
@@ -861,4 +1015,19 @@ export const mockLogs = [
   { id: "LOG-008", timestamp: "31 May 2025, 08:10 AM", user: "Yudi Setiawan", userRole: "Operator", userAvatar: "https://i.pravatar.cc/150?u=yudi", action: "Updated", module: "Vendor", resource: "Dell Technologies", resourceId: "VEN-001", ip: "192.168.1.20", severity: "Info", userAgent: "Mozilla/5.0...", description: "Vendor contact updated.", changes: [] },
   { id: "LOG-009", timestamp: "31 May 2025, 07:58 AM", user: "Agus Setiawan", userRole: "Super Admin", userAvatar: "https://i.pravatar.cc/150?u=agus", action: "Role Changed", module: "User", resource: "Rudi Hermawan", resourceId: "USR-0021", ip: "192.168.1.10", severity: "Warning", userAgent: "Mozilla/5.0...", description: "User role elevated.", changes: [{field: "Role", from: "Manager", to: "Admin"}] },
   { id: "LOG-010", timestamp: "31 May 2025, 07:45 AM", user: "System", userRole: "System", userAvatar: "https://i.pravatar.cc/150?u=system", action: "Login Failed", module: "Auth", resource: "Login Attempt", resourceId: "-", ip: "192.168.1.99", severity: "Critical", userAgent: "Unknown", description: "Multiple failed login attempts detected.", changes: [] },
+];
+
+export const mockMaintenanceTickets = [
+  { id: "TKT-2025-101", assetId: "SRV-2026-001", assetName: "Dell PowerEdge R750", title: "Fan failure on node 2", description: "System reporting fan 2 failure. Requires immediate replacement to prevent overheating.", priority: "High", status: "Open", reportedBy: "Budi Santoso", assignedTo: "Hardware Team", date: "12 Jun 2025", type: "Repair" },
+  { id: "TKT-2025-102", assetId: "UPS-2026-001", assetName: "APC Smart-UPS 3000", title: "Battery replacement", description: "Routine battery replacement scheduled. Batteries arrived on site.", priority: "Medium", status: "In Progress", reportedBy: "Agus Setiawan", assignedTo: "Power Team", date: "10 Jun 2025", type: "Preventative" },
+  { id: "TKT-2025-103", assetId: "SW-2026-001", assetName: "Cisco Catalyst 9500", title: "Firmware upgrade required", description: "Vulnerability CVE-2025-1024 requires patching firmware to v9.3.5", priority: "High", status: "Open", reportedBy: "Security Team", assignedTo: "Network Team", date: "11 Jun 2025", type: "Update" },
+  { id: "TKT-2025-104", assetId: "PAC-2026-001", assetName: "CRAC-01", title: "Coolant leak check", description: "Minor condensation observed near the valve. Needs inspection.", priority: "Low", status: "Closed", reportedBy: "Dewi Kartika", assignedTo: "Facilities", date: "05 Jun 2025", type: "Inspection" },
+  { id: "TKT-2025-105", assetId: "STG-2026-001", assetName: "Dell PowerStore 1000T", title: "Drive 4 predictive failure", description: "SMART status shows predictive failure for Drive bay 4. Need hot-swap.", priority: "Medium", status: "In Progress", reportedBy: "System Monitor", assignedTo: "Storage Team", date: "09 Jun 2025", type: "Repair" },
+];
+
+export const mockPreventativeSchedules = [
+  { id: "PM-2025-01", assetCategory: "Generators", taskName: "Bi-Annual Load Bank Testing", frequency: "6 Months", nextDueDate: "15 Jul 2025", assignedVendor: "PT. Trakindo Utama", status: "Scheduled" },
+  { id: "PM-2025-02", assetCategory: "Cooling / CRAC", taskName: "Quarterly Filter & Valve Check", frequency: "3 Months", nextDueDate: "20 Jun 2025", assignedVendor: "PT. Stulz Air Technology", status: "Pending Approval" },
+  { id: "PM-2025-03", assetCategory: "UPS Systems", taskName: "Annual Battery Impedance Test", frequency: "12 Months", nextDueDate: "01 Aug 2025", assignedVendor: "PT. Schneider Electric", status: "Scheduled" },
+  { id: "PM-2025-04", assetCategory: "Fire Suppression", taskName: "FM-200 Cylinder Pressure Check", frequency: "6 Months", nextDueDate: "10 Jul 2025", assignedVendor: "Internal Facilities", status: "Scheduled" },
 ];

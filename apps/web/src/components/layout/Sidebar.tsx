@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Server, Tags, Users, Globe, Building2, Layers, DoorOpen, ArrowRightLeft, ShieldCheck, FileText, Settings, HelpCircle, Box } from "lucide-react"
+import { LayoutDashboard, Server, Tags, Users, Globe, Building2, Layers, DoorOpen, ArrowRightLeft, ShieldCheck, FileText, Settings, HelpCircle, Box, Wrench, ScanLine, BarChart2 } from "lucide-react"
+import { useSession } from "next-auth/react"
 
 const navGroups = [
   {
@@ -11,6 +12,7 @@ const navGroups = [
       { name: "Assets", href: "/assets", icon: Server },
       { name: "Categories", href: "/categories", icon: Tags },
       { name: "Vendors", href: "/vendors", icon: Box },
+      { name: "Scan QR", href: "/scanner", icon: ScanLine },
     ]
   },
   {
@@ -26,7 +28,10 @@ const navGroups = [
   {
     title: "OPERATIONS",
     items: [
+      { name: "Network & IPAM", href: "/network", icon: Globe },
       { name: "Asset Movements", href: "/movements", icon: ArrowRightLeft },
+      { name: "Auditing & Labels", href: "/auditing", icon: Box },
+      { name: "Maintenance", href: "/maintenance", icon: Wrench },
       { name: "Warranty", href: "/warranty", icon: ShieldCheck },
     ]
   },
@@ -35,6 +40,7 @@ const navGroups = [
     items: [
       { name: "Users", href: "/users", icon: Users },
       { name: "Audit Logs", href: "/logs", icon: FileText },
+      { name: "Financial Analytics", href: "/analytics", icon: BarChart2 },
       { name: "Settings", href: "/settings", icon: Settings },
     ]
   }
@@ -42,6 +48,19 @@ const navGroups = [
 
 export function Sidebar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const user = session?.user as any
+
+  // Check if user is Super Admin or has is_superuser flag
+  const isSuperAdmin = user?.role === "Super Admin" || user?.role === "Admin"
+
+  // Filter groups based on role
+  const allowedGroups = navGroups.filter(group => {
+    if (group.title === "MANAGEMENT" && !isSuperAdmin) {
+      return false; // Hide management from regular users
+    }
+    return true;
+  })
 
   return (
     <div className="w-64 bg-background shadow-neu-extruded border-neu z-20 flex flex-col h-full text-foreground m-4 rounded-[32px]">
@@ -72,7 +91,7 @@ export function Sidebar() {
           </Link>
         </div>
 
-        {navGroups.map((group, idx) => (
+        {allowedGroups.map((group, idx) => (
           <div key={group.title} className={idx > 0 ? "pt-6 border-t border-white/60 relative before:absolute before:top-0 before:left-0 before:w-full before:border-t before:border-[#A3B1C6]/20" : ""}>
             <h4 className="text-[11px] font-bold text-muted-foreground tracking-widest mb-3 px-4 uppercase">{group.title}</h4>
             <nav className="space-y-2">

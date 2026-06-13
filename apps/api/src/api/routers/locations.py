@@ -20,6 +20,18 @@ def create_site(site_in: SiteCreate, db: SessionDep, current_user: CurrentUser) 
     db.refresh(site)
     return site
 
+@router.get("/buildings", response_model=List[BuildingSchema])
+def read_buildings(db: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100) -> Any:
+    return db.query(Building).offset(skip).limit(limit).all()
+
+@router.get("/floors", response_model=List[FloorSchema])
+def read_floors(db: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100) -> Any:
+    return db.query(Floor).offset(skip).limit(limit).all()
+
+@router.get("/rooms", response_model=List[RoomSchema])
+def read_rooms(db: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100) -> Any:
+    return db.query(Room).offset(skip).limit(limit).all()
+
 @router.get("/racks", response_model=List[RackSchema])
 def read_racks(db: SessionDep, current_user: CurrentUser, skip: int = 0, limit: int = 100) -> Any:
     return db.query(Rack).offset(skip).limit(limit).all()

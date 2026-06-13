@@ -41,6 +41,7 @@ class Asset(AssetBase):
     id: int
     created_at: datetime
     updated_at: Optional[datetime] = None
+    category: Optional[AssetCategory] = None
     
     class Config:
         from_attributes = True
