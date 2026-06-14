@@ -231,11 +231,16 @@ export default function VendorsPage() {
                     </div>
                     
                     <div className="pt-4 border-t border-[#A3B1C6]/20 flex justify-between gap-2">
-                      <Button variant="ghost" className="flex-1 h-10 shadow-neu-inset hover:shadow-neu-extruded text-accent hover:text-accent font-bold" onClick={() => openEditDrawer(vendor)}>
-                        <Edit2 className="w-4 h-4 mr-2" /> Edit
+                      <Link href={`/vendors/${vendor.id}`} className="flex-1">
+                        <Button variant="ghost" className="w-full h-10 shadow-neu-inset hover:shadow-neu-extruded text-accent hover:text-accent font-bold">
+                          <Eye className="w-4 h-4 mr-2" /> View
+                        </Button>
+                      </Link>
+                      <Button variant="ghost" className="flex-1 h-10 shadow-neu-inset hover:shadow-neu-extruded text-accent hover:text-accent font-bold" onClick={(e) => { e.stopPropagation(); openEditDrawer(vendor); }}>
+                        <Edit2 className="w-4 h-4" />
                       </Button>
-                      <Button variant="ghost" className="flex-1 h-10 shadow-neu-inset hover:shadow-neu-extruded text-red-500 hover:text-red-600 font-bold" onClick={() => handleDelete(vendor.id)}>
-                        <Trash2 className="w-4 h-4 mr-2" /> Delete
+                      <Button variant="ghost" className="flex-1 h-10 shadow-neu-inset hover:shadow-neu-extruded text-red-500 hover:text-red-600 font-bold" onClick={(e) => { e.stopPropagation(); handleDelete(vendor.id); }}>
+                        <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
                   </CardContent>

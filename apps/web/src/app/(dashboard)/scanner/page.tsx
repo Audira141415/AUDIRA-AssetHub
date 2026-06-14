@@ -41,28 +41,30 @@ export default function ScannerPage() {
   }, [router])
 
   return (
-    <div className="flex flex-col w-full gap-6 pb-6 h-full">
+    <div className="space-y-8 pb-10">
       <HeroSection
         title="QR / Barcode Scanner"
         description="Scan an asset's QR code to instantly pull up its details and maintenance history."
-        imageSrc="/images/heroes/movements.png"
+        imageSrc="/images/heroes/scanner.png"
       />
       
-      <div className="flex flex-col items-center justify-center p-8 bg-background shadow-neu-extruded border-neu rounded-[32px] max-w-2xl mx-auto w-full">
-        {scanResult ? (
-          <div className="text-center p-8">
-            <h2 className="text-2xl font-bold text-accent mb-4">Code Scanned!</h2>
-            <p className="text-lg font-medium text-foreground mb-4">{scanResult}</p>
-            <p className="text-sm text-muted-foreground animate-pulse">Redirecting to asset details...</p>
-          </div>
-        ) : (
-          <div className="w-full">
-            <div id="reader" className="w-full bg-black/5 rounded-2xl overflow-hidden shadow-neu-inset"></div>
-            <p className="text-center text-sm font-bold text-muted-foreground mt-6">
-              Please point your camera at the Asset QR Code.
-            </p>
-          </div>
-        )}
+      <div className="max-w-[1400px] mx-auto px-8 w-full">
+        <div className="flex flex-col items-center justify-center p-8 bg-background shadow-neu-extruded border-neu rounded-[32px] max-w-2xl mx-auto w-full">
+          {scanResult ? (
+            <div className="text-center p-8">
+              <h2 className="text-2xl font-bold text-accent mb-4">Code Scanned!</h2>
+              <p className="text-lg font-medium text-foreground mb-4">{scanResult}</p>
+              <p className="text-sm text-muted-foreground animate-pulse">Redirecting to asset details...</p>
+            </div>
+          ) : (
+            <div className="w-full">
+              <div id="reader" className="w-full bg-black/5 rounded-2xl overflow-hidden shadow-neu-inset"></div>
+              <p className="text-center text-sm font-bold text-muted-foreground mt-6">
+                Please point your camera at the Asset QR Code.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

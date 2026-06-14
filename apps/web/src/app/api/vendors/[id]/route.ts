@@ -1,18 +1,55 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
+    const vendor = await prisma.vendor.findUnique({
+      where: { id: id },
+      include: {
+        assets: {
+          include: {
+            category: true,
+            location: true,
+          }
+        }
+      }
+    });
+
+    if (!vendor) {
+      return NextResponse.json({ error: "Vendor not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(vendor);
+  } catch (error) {
+    console.error("Failed to fetch vendor:", error);
+    return NextResponse.json({ error: "Failed to fetch vendor" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
     const body = await request.json();
+    const { 
+      name, type, email, phone, status,
+      rating, contractExpiry, accountManagerName, accountManagerEmail, techSupportL1Phone, techSupportL2Phone 
+    } = body;
 
     const vendor = await prisma.vendor.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
-        name: body.name,
-        type: body.type,
-        email: body.email || null,
-        phone: body.phone || null,
-        status: body.status || "Active",
+        name,
+        type,
+        email: email || null,
+        phone: phone || null,
+        status: status || "Active",
+        rating, 
+        contractExpiry, 
+        accountManagerName, 
+        accountManagerEmail, 
+        techSupportL1Phone, 
+        techSupportL2Phone
       }
     });
     
@@ -23,10 +60,12 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
+    // Check if vendor has assets before deleting
     const vendor = await prisma.vendor.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { _count: { select: { assets: true } } }
     });
 
@@ -39,7 +78,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.vendor.delete({
-      where: { id: params.id }
+      where: { id: id }
     });
     
     return NextResponse.json({ success: true });

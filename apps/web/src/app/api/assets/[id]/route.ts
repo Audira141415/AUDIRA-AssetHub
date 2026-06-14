@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const idOrTag = params.id;
+    const { id } = await params;
+    const idOrTag = id;
     let whereClause = {};
 
     if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {
@@ -32,9 +33,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const idOrTag = params.id;
+    const { id } = await params;
+    const idOrTag = id;
     let whereClause = {};
 
     if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {
@@ -44,19 +46,20 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const body = await request.json();
-    const { tag, hostname, status, categoryId, vendorId, rack, uPosition, warranty } = body;
+    const { 
+      tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, warranty,
+      lifecycleState, eolDate, eosDate, slaLevel, contractNumber,
+      businessApp, businessOwner, techOwner, upstreamPowerId, upstreamNetId,
+      costCenter, ownershipType, powerWatts, weightKg, coolingBTU 
+    } = body;
 
     const updatedAsset = await prisma.asset.update({
       where: whereClause as any,
       data: {
-        tag,
-        hostname,
-        status,
-        categoryId,
-        vendorId,
-        rack,
-        uPosition,
-        warranty
+        tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, warranty,
+        lifecycleState, eolDate, eosDate, slaLevel, contractNumber,
+        businessApp, businessOwner, techOwner, upstreamPowerId, upstreamNetId,
+        costCenter, ownershipType, powerWatts, weightKg, coolingBTU
       },
       include: {
         category: true,
@@ -72,9 +75,10 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const idOrTag = params.id;
+    const { id } = await params;
+    const idOrTag = id;
     let whereClause = {};
 
     if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {

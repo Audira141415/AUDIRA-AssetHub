@@ -130,7 +130,7 @@ export default function AuditingPage() {
           <HeroSection
             title="Auditing & Labels"
             description="Generate asset QR code labels and conduct physical reconciliation audits."
-            imageSrc="/images/heroes/assets.png" 
+            imageSrc="/images/heroes/auditing.png" 
           >
             <div className="flex gap-4 flex-wrap">
               <Button variant="ghost" className="bg-background/50 backdrop-blur-md shadow-neu-extruded text-foreground hover:text-accent hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl flex items-center gap-2 h-12 px-6 transition-all font-bold whitespace-nowrap">

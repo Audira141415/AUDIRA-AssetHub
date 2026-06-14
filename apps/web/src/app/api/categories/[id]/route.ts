@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const { name, code, description } = body;
 
     const category = await prisma.category.update({
-      where: { id: params.id },
+      where: { id: id },
       data: {
         name,
         code,
@@ -22,11 +23,12 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     // Check if category has assets before deleting
     const category = await prisma.category.findUnique({
-      where: { id: params.id },
+      where: { id: id },
       include: { _count: { select: { assets: true } } }
     });
 
@@ -39,7 +41,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.category.delete({
-      where: { id: params.id }
+      where: { id: id }
     });
     
     return NextResponse.json({ success: true });

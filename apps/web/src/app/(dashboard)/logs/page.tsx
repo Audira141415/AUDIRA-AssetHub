@@ -42,16 +42,16 @@ export default function AuditLogsPage() {
   }, [logs, searchQuery]);
 
   return (
-    <div className="flex w-full gap-6 pb-6 h-full px-6">
-      <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
-        
+    <div className="space-y-8 pb-10">
         <HeroSection
-          title="Audit Logs"
-          description="Track and review all system activities and changes"
+          title="Audit Logs & Compliance"
+          subtitle="Track and review all system activities, configurations, and state changes for security compliance."
+          icon={<FileText className="w-8 h-8 text-accent" />}
           imageSrc="/images/heroes/logs.png"
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 mt-2">
+      <div className="max-w-[1400px] mx-auto px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
           <Card className="rounded-[24px] border-neu shadow-neu-extruded bg-background">
             <CardContent className="p-5 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500"><FileText className="w-6 h-6" /></div>

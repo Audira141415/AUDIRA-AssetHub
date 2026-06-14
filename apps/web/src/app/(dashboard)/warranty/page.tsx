@@ -89,7 +89,7 @@ export default function WarrantyPage() {
         <HeroSection
           title="Warranty Tracker"
           description="Monitor asset warranties, support contracts, and renewals"
-          imageSrc="/images/heroes/reports.png"
+          imageSrc="/images/heroes/warranty.png"
         />
 
         {/* KPI Cards */}

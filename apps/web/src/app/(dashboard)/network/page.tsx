@@ -43,7 +43,7 @@ export default function NetworkPage() {
       <HeroSection
         title="Network & IPAM"
         description="Manage IP address allocations, subnets, and VLANs for your infrastructure."
-        imageSrc="/images/heroes/settings.png" /* Fallback image */
+        imageSrc="/images/heroes/network.png"
       >
         <div className="flex gap-4">
           <Button onClick={() => setIsSubnetModalOpen(true)} className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded rounded-2xl flex items-center gap-2 h-12 px-6 font-bold border-none">

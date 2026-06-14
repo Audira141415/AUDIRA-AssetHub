@@ -90,21 +90,6 @@ export default function AnalyticsPage() {
       value: yearMap[y]
     }))
 
-    // Add some mock data if DB is empty to show the charts
-    if (totalInv === 0) {
-      totalInv = 1250000;
-      currentBV = 850000;
-      depExp = 400000;
-      catArr.push(
-        { name: "Server", value: 500000 },
-        { name: "Switch", value: 300000 },
-        { name: "Storage", value: 450000 }
-      );
-      for(let i=2024; i<=2029; i++){
-        yearArr.push({ year: i.toString(), value: 1250000 - ((i-2024)*150000) })
-      }
-    }
-
     return { totalInvestment: totalInv, currentBookValue: currentBV, depreciationExpense: depExp, costByCategory: catArr, yearlyDepreciation: yearArr }
   }, [assets, currentYear])
 
@@ -119,7 +104,7 @@ export default function AnalyticsPage() {
       <HeroSection 
         title="Financial Analytics" 
         description="Track asset depreciation, investment costs, and financial forecasts."
-        imageSrc="/images/heroes/dashboard.png"
+        imageSrc="/images/heroes/analytics.png"
       />
 
       {/* KPI Cards */}

@@ -68,7 +68,7 @@ export default function MaintenancePage() {
         <HeroSection
           title="Maintenance & Work Orders"
           description="Manage helpdesk tickets, repairs, and preventative maintenance schedules."
-          imageSrc="/images/heroes/settings.png" /* Reusing settings image */
+          imageSrc="/images/heroes/maintenance.png"
         >
           <div className="flex gap-4 flex-wrap">
             <Button variant="ghost" className="bg-background/50 backdrop-blur-md shadow-neu-extruded text-foreground hover:text-accent hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl flex items-center gap-2 h-12 px-6 transition-all font-bold whitespace-nowrap">

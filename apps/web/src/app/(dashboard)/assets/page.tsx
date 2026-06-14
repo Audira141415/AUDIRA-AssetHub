@@ -1,14 +1,12 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
+import { Plus, Search, Filter, MoreHorizontal, Server, Activity, Wrench, ShieldAlert, ChevronRight, ArrowUpDown, ChevronDown, CheckCircle2, AlertCircle, WifiOff, Download, Upload, QrCode, Trash2, X } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Plus, Search, Filter, MoreHorizontal, Server, Activity, Wrench, ShieldAlert, 
-  ChevronRight, ArrowUpDown, ChevronDown, CheckCircle2, AlertCircle, WifiOff,
-  Download, Upload, QrCode, Trash2, X } from "lucide-react"
-import { baseAssets, getAssetImage } from "@/lib/mock-data"
 import { apiClient } from "@/lib/api-client"
+import { getAssetImage } from "@/lib/utils"
 import { HeroSection } from "@/components/ui/hero-section"
 import { BulkImportModal } from "@/components/BulkImportModal"
 import { QRCodeModal } from "@/components/QRCodeModal"
@@ -113,8 +111,8 @@ export default function AllAssetsPage() {
         setAssets(mappedAssets);
         setIsOffline(false);
       } catch (error) {
-        console.error("Failed to fetch assets from API, falling back to mock data:", error);
-        setAssets(baseAssets);
+        console.error("Failed to fetch assets from API:", error);
+        setAssets([]);
         setIsOffline(true);
       } finally {
         setIsLoading(false);

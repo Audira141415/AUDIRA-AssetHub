@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Server, Tags, Users, Globe, Building2, Layers, DoorOpen, ArrowRightLeft, ShieldCheck, FileText, Settings, HelpCircle, Box, Wrench, ScanLine, BarChart2 } from "lucide-react"
+import { LayoutDashboard, Server, Tags, Users, Globe, Building2, Layers, DoorOpen, ArrowRightLeft, ShieldCheck, FileText, Settings, HelpCircle, Box, Wrench, ScanLine, BarChart2, Disc, LifeBuoy } from "lucide-react"
 import { useSession } from "next-auth/react"
 
 const navGroups = [
@@ -10,6 +10,7 @@ const navGroups = [
     title: "INVENTORY",
     items: [
       { name: "Assets", href: "/assets", icon: Server },
+      { name: "Software Licenses", href: "/licenses", icon: Disc },
       { name: "Categories", href: "/categories", icon: Tags },
       { name: "Vendors", href: "/vendors", icon: Box },
       { name: "Scan QR", href: "/scanner", icon: ScanLine },
@@ -28,6 +29,7 @@ const navGroups = [
   {
     title: "OPERATIONS",
     items: [
+      { name: "IT Helpdesk Tickets", href: "/tickets", icon: LifeBuoy },
       { name: "Network & IPAM", href: "/network", icon: Globe },
       { name: "Asset Movements", href: "/movements", icon: ArrowRightLeft },
       { name: "Auditing & Labels", href: "/auditing", icon: Box },

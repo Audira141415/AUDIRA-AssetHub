@@ -1,15 +1,16 @@
 "use client"
 
-import { useState, use } from "react"
+import { useState, useEffect, use } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { 
   ArrowLeft, Edit2, Copy, Trash2, CheckCircle2, Box, Layers, Server, 
   HardDrive, Network, Share2, Router, ShieldAlert, Zap, BatteryCharging, 
-  Plug, Snowflake, Wind, Shield, Calendar, Activity, AlertTriangle, X
+  Plug, Snowflake, Wind, Shield, Calendar, Activity, AlertTriangle, X, ChevronRight
 } from "lucide-react"
-import { mockCategories, baseAssets } from "@/lib/mock-data"
+import { apiClient } from "@/lib/api-client"
+import { HeroSection } from "@/components/ui/hero-section"
 
 const iconMap: any = {
   Layers, Server, HardDrive, Network, Share2, Router, ShieldAlert, Zap, BatteryCharging, 
@@ -20,101 +21,81 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
   const { id } = use(params)
   const [activeTab, setActiveTab] = useState("Overview")
 
-  const category = mockCategories.find(c => c.id === id)
-  
+  const [category, setCategory] = useState<any>(null)
+  const [relatedAssets, setRelatedAssets] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [catRes, assetsRes] = await Promise.all([
+          apiClient.get(`/categories/${id}`),
+          apiClient.get('/assets')
+        ]);
+        
+        setCategory(catRes.data);
+        
+        // Find assets belonging to this category
+        const filteredAssets = assetsRes.data.filter((a: any) => a.categoryId === id);
+        setRelatedAssets(filteredAssets);
+      } catch (err) {
+        console.error("Failed to fetch category details", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [id])
+
+  if (isLoading) {
+    return <div className="p-8 text-center font-bold text-muted-foreground mt-10">Loading Category...</div>
+  }
+
   if (!category) {
     return <div className="p-8 text-center font-bold text-muted-foreground mt-10">Category not found</div>
   }
 
-  const parentCat = mockCategories.find(c => c.id === category.parent)
+  const parentCat = category.parent ? { name: "Parent Category" } : null // If we want to show parent details, we can fetch it, for now mock it.
   const IconComponent = iconMap[category.icon] || Layers
-
-  // Find assets belonging to this category (smart fuzzy match for mock data)
-  const relatedAssets = baseAssets.filter(a => {
-    const assetCat = a.cat.toLowerCase();
-    const catId = category.id;
-
-    const mappings: Record<string, string[]> = {
-      'cat-infra': ['server', 'storage', 'mainframe', 'rack'],
-      'cat-server': ['server', 'mainframe'],
-      'cat-storage': ['storage', 'san'],
-      'cat-network': ['switch', 'router', 'firewall', 'transceiver', 'odf', 'access point'],
-      'cat-switch': ['switch', 'transceiver', 'odf'],
-      'cat-router': ['router'],
-      'cat-firewall': ['firewall', 'security'],
-      'cat-power': ['ups', 'battery', 'pdu', 'mdp', 'ats', 'generator', 'genset', 'rectifier', 'panel'],
-      'cat-ups': ['ups', 'battery', 'rectifier', 'ats'],
-      'cat-pdu': ['pdu', 'mdp', 'panel'],
-      'cat-cooling': ['pac', 'crac', 'ac', 'chiller', 'cooling', 'humidifier', 'sensor'],
-      'cat-crac': ['pac', 'crac', 'ac'],
-      'cat-security': ['cctv', 'camera', 'nvr', 'access', 'door', 'alarm', 'turnstile', 'fire'],
-      'cat-cctv': ['cctv', 'camera', 'nvr'],
-      'cat-access': ['access', 'door', 'turnstile']
-    };
-
-    if (mappings[catId]) {
-      // Exclude "rack" from "servers" category so Server Rack doesn't fall into Servers
-      if (catId === 'cat-server' && assetCat.includes('rack')) return false;
-      return mappings[catId].some(k => assetCat.includes(k));
-    }
-    
-    // Fallback
-    return assetCat.includes(category.name.toLowerCase()) || category.name.toLowerCase().includes(assetCat);
-  });
 
   const tabs = ["Overview", "Assets", "Templates", "History"]
 
   return (
-    <div className="space-y-8 pb-12 mt-2">
-      
-      {/* Back Link */}
-      <div>
-        <Link href="/categories" className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-accent transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Categories
-        </Link>
-      </div>
+    <div className="space-y-8 pb-12 p-8 pt-4">
+      <div className="max-w-[1400px] mx-auto w-full">
+        {/* Back Link */}
+        <div className="flex items-center text-sm text-muted-foreground font-bold tracking-wider mb-4">
+          <Link href="/categories" className="hover:text-accent transition-colors flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to Categories
+          </Link>
+          <ChevronRight className="w-4 h-4 mx-2 opacity-50" />
+          <span className="text-accent">{category.name}</span>
+        </div>
 
-      {/* Header Profile */}
-      <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center shadow-neu-inset" style={{ color: category.color }}>
-              <IconComponent className="w-10 h-10" />
-            </div>
-            <div>
-              <div className="flex items-center gap-3 mb-1">
-                <h1 className="text-3xl font-display font-bold text-foreground">{category.name}</h1>
-                <span className={`px-3 py-1 rounded-full text-xs font-bold shadow-neu-inset ${category.status === 'Active' ? 'text-[#38B2AC]' : 'text-muted-foreground'}`}>
-                  {category.status}
-                </span>
-                <span className="px-3 py-1 rounded-full text-xs font-bold shadow-neu-inset bg-accent/5 text-accent font-mono">
-                  {category.code}
-                </span>
-              </div>
-              <p className="text-muted-foreground font-medium flex items-center gap-2">
-                {parentCat ? (
-                  <>
-                    <span className="text-foreground">{parentCat.name}</span>
-                    <span className="text-[#A3B1C6]">/</span>
-                  </>
-                ) : null}
-                {category.description}
-              </p>
-            </div>
-          </div>
+        {/* Header Profile */}
+        <HeroSection 
+          compact 
+          title={category.name} 
+          description={category.description || "No description provided."}
+          icon={<IconComponent className="w-8 h-8" style={{ color: category.color || '#6C63FF' }} />}
+        >
+          <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border uppercase tracking-wider ${category.status === 'Active' ? 'bg-[#38B2AC]/10 text-[#38B2AC] border-[#38B2AC]/20' : 'bg-[#E53E3E]/10 text-[#E53E3E] border-[#E53E3E]/20'}`}>
+            {category.status || 'Active'}
+          </span>
+          <span className="px-3 py-1.5 rounded-lg text-xs font-bold border border-accent/20 bg-accent/10 text-accent font-mono uppercase tracking-wider">
+            {category.code || 'CAT-001'}
+          </span>
           
-          <div className="flex gap-3">
-            <Button variant="outline" className="h-12 px-6 rounded-2xl shadow-neu-extruded border-neu font-bold text-foreground hover:text-accent">
+          <div className="flex gap-4 ml-auto">
+            <Button variant="outline" className="shadow-neu-extruded border-neu text-foreground h-10 px-6 rounded-xl font-bold text-sm hover:text-accent">
               <Edit2 className="w-4 h-4 mr-2" /> Edit
             </Button>
-            <Button variant="outline" className="h-12 px-6 rounded-2xl shadow-neu-extruded border-neu font-bold text-foreground hover:text-accent">
-              <Copy className="w-4 h-4 mr-2" /> Duplicate
-            </Button>
-            <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl text-red-500 hover:bg-red-50 hover:text-red-600 hover:shadow-neu-inset">
-              <Trash2 className="w-5 h-5" />
+            <Button variant="outline" className="shadow-neu-extruded border-neu text-red-500 h-10 px-4 rounded-xl font-bold text-sm hover:text-red-600">
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
-        </div>
+        </HeroSection>
 
         {/* Tab Navigation */}
         <div className="flex overflow-x-auto gap-2 mt-8 pt-4 border-t border-[#A3B1C6]/30 px-2 [&::-webkit-scrollbar]:hidden">
@@ -169,7 +150,7 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
                     </div>
                     <div>
                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Created Date</p>
-                      <p className="text-xl font-bold text-foreground mt-1">{category.createdDate}</p>
+                      <p className="text-xl font-bold text-foreground mt-1">{new Date(category.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -246,8 +227,8 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
                         <td className="px-8 py-4 font-bold text-foreground">
                           <Link href={`/assets/${asset.tag}`} className="hover:text-accent transition-colors">{asset.tag}</Link>
                         </td>
-                        <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{asset.host}</td>
-                        <td className="px-6 py-4 text-sm text-foreground">{asset.loc} • {asset.rack} • U{asset.u}</td>
+                        <td className="px-6 py-4 font-mono text-sm text-muted-foreground">{asset.hostname || "N/A"}</td>
+                        <td className="px-6 py-4 text-sm text-foreground">{asset.location?.name || "N/A"} • {asset.rack || "Floor"}</td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex px-3 py-1 rounded-full text-xs font-bold shadow-neu-inset ${asset.status === 'Active' ? 'text-[#38B2AC]' : 'text-muted-foreground'}`}>
                             {asset.status}
@@ -280,7 +261,7 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
             <CardContent className="p-8">
               {category.templates && category.templates.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {category.templates.map((template, idx) => (
+                  {category.templates.map((template: string, idx: number) => (
                     <div key={idx} className="bg-background shadow-neu-inset border border-white/50 rounded-2xl p-6">
                       <div className="w-10 h-10 rounded-xl bg-background shadow-neu-extruded flex items-center justify-center mb-4 text-accent">
                         <span className="font-bold text-sm">{idx + 1}</span>
@@ -321,8 +302,8 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
                     <td className="px-8 py-5 font-bold border-white/60 flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-xs">ADR</div> Agus Dwi R
                     </td>
-                    <td className="px-6 py-5 text-sm text-foreground">Created Category via API</td>
-                    <td className="px-6 py-5 font-mono text-xs text-muted-foreground">{category.createdDate} 09:15:22</td>
+                    <td className="px-6 py-5 text-sm text-foreground">Created Category</td>
+                    <td className="px-6 py-5 font-mono text-xs text-muted-foreground">{new Date(category.createdAt).toLocaleString()}</td>
                   </tr>
                 </tbody>
               </table>

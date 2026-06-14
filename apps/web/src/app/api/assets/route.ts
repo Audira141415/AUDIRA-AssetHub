@@ -39,15 +39,33 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { tag, hostname, status, categoryId, vendorId, rack, uPosition } = body
+    const { tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition } = body
+    
+    let finalTag = tag;
+    
+    // Automatically prepend Location Code
+    if (locationId) {
+      const location = await prisma.location.findUnique({ where: { id: locationId } });
+      if (location) {
+        let locCode = location.name.substring(0, 3).toUpperCase();
+        if (location.name.toLowerCase().includes('batam')) locCode = 'BTM';
+        if (location.name.toLowerCase().includes('cikarang')) locCode = 'CKR';
+        if (location.name.toLowerCase().includes('jakarta')) locCode = 'JKT';
+        
+        if (!finalTag.startsWith(locCode)) {
+          finalTag = `${locCode}-${finalTag}`;
+        }
+      }
+    }
 
     const newAsset = await prisma.asset.create({
       data: {
-        tag,
+        tag: finalTag,
         hostname,
         status: status || "Active",
         categoryId,
         vendorId,
+        locationId,
         rack,
         uPosition,
       },

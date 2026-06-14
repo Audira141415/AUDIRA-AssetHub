@@ -2,8 +2,11 @@
 
 import { useQuery } from"@tanstack/react-query"
 import { fetchApi } from"@/lib/api"
-import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
-import { useParams } from"next/navigation"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useParams, useRouter } from "next/navigation"
+import { HeroSection } from "@/components/ui/hero-section"
+import { Server, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 export default function RackVisualizationPage() {
   const params = useParams()
@@ -27,15 +30,24 @@ export default function RackVisualizationPage() {
   })
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-end">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white">{rack.name}</h1>
-          <p className="text-muted-foreground mt-1">Utilization: {rack.utilization_percentage}%</p>
+    <div className="space-y-8 p-8 pt-4 pb-12">
+      <div className="max-w-[1400px] mx-auto w-full">
+        <div className="flex items-center text-sm text-muted-foreground font-bold tracking-wider mb-4">
+          <Link href="/racks" className="hover:text-accent transition-colors flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to Racks
+          </Link>
         </div>
+
+        <HeroSection 
+          compact 
+          title={rack.name} 
+          description={`Utilization: ${rack.utilization_percentage}%`}
+          icon={<Server className="w-8 h-8 text-accent" />}
+        />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="flex-1 w-full max-w-[1400px] mx-auto overflow-y-auto pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Visual Renderer */}
         <div className="lg:col-span-1  p-4 rounded-xl -4  shadow-2xl relative flex flex-col items-center">
           <div className="w-full  -2  rounded-sm p-2 space-y-1">
@@ -98,6 +110,7 @@ export default function RackVisualizationPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
         </div>
       </div>
     </div>

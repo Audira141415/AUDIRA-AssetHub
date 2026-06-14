@@ -18,7 +18,26 @@ import {
   UserCheck,
   Bell,
   Database,
-  TerminalSquare
+  TerminalSquare,
+  Shield,
+  Cloud,
+  Key,
+  Server,
+  Cpu,
+  HardDrive,
+  Wifi,
+  Link,
+  Check,
+  AlertTriangle,
+  Eye,
+  EyeOff,
+  Save,
+  Play,
+  UploadCloud,
+  Layers,
+  Lock,
+  Mail,
+  Webhook
 } from "lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 
@@ -47,7 +66,7 @@ export default function SettingsPage() {
   const tabs = ["General", "System", "Notifications", "Security", "Integrations", "Backup & Restore", "Maintenance"]
 
   return (
-    <div className="flex w-full gap-6 pb-6 h-full">
+    <div className="flex flex-col lg:flex-row w-full gap-6 pb-6">
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         
         {/* Breadcrumb & Header */}
@@ -71,7 +90,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex-1 pr-2 pb-10 space-y-6">
           
           {activeTab === "General" ? (
             <>
@@ -300,6 +319,417 @@ export default function SettingsPage() {
                 </div>
               </div>
             </>
+          ) : activeTab === "System" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Advanced System Settings</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Core infrastructure and runtime environments</p>
+                  </div>
+                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
+                    <Save size={16} /> Save Changes
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Environment Panel */}
+                  <div className="bg-background shadow-neu-inset-small p-6 rounded-3xl space-y-5 border border-[#A3B1C6]/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-neu-inset-small"><Server size={20} /></div>
+                      <div><h4 className="font-bold text-sm">Server Node</h4><p className="text-[10px] text-muted-foreground">Active processing cluster</p></div>
+                    </div>
+                    <div>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>us-east-1a (Primary)</option>
+                        <option>us-east-1b (Failover)</option>
+                        <option>eu-central-1 (Edge)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">JVM Memory Allocation</label>
+                      <div className="flex gap-4">
+                        <div className="flex-1 h-12 rounded-2xl bg-background shadow-neu-inset-deep flex items-center px-4"><span className="text-sm font-bold">4096</span><span className="text-xs text-muted-foreground ml-auto">MB</span></div>
+                        <Button className="h-12 w-12 rounded-2xl bg-background shadow-neu-extruded hover:shadow-neu-hover text-accent"><RefreshCw size={16} /></Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cache & DB Panel */}
+                  <div className="bg-background shadow-neu-inset-small p-6 rounded-3xl space-y-5 border border-[#A3B1C6]/10">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 shadow-neu-inset-small"><Database size={20} /></div>
+                      <div><h4 className="font-bold text-sm">Cache & Persistence</h4><p className="text-[10px] text-muted-foreground">Redis and DB polling</p></div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Cache Strategy</label>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>Aggressive (Redis Distributed)</option>
+                        <option>Standard (Memory)</option>
+                        <option>Bypass (Direct DB)</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center justify-between h-12 bg-background shadow-neu-extruded rounded-2xl px-4">
+                      <span className="text-xs font-bold text-foreground flex items-center gap-2"><Activity size={14} className="text-green-500"/> Connection Pooling</span>
+                      <div className="w-10 h-5 bg-background shadow-neu-inset-deep rounded-full relative cursor-pointer"><div className="absolute top-1 bottom-1 w-3 rounded-full shadow-md transition-all duration-300 bg-green-500 left-6"></div></div>
+                    </div>
+                  </div>
+                </div>
+
+                <hr className="my-8 border-[#A3B1C6]/20 shadow-neu-inset-small" />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div>
+                    <label className="text-xs font-bold text-muted-foreground mb-2 block">Audit Log Retention</label>
+                    <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                      <option>90 Days (Compliance)</option>
+                      <option>30 Days</option>
+                      <option>Keep Forever</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-muted-foreground mb-2 block">Global API Rate Limit (req/min)</label>
+                    <Input defaultValue="5000" className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 font-bold text-sm px-4 focus-visible:ring-accent" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : activeTab === "Notifications" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Enterprise Notification Routing</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Multi-channel alerts and webhook integrations</p>
+                  </div>
+                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
+                    <Save size={16} /> Save Changes
+                  </Button>
+                </div>
+
+                {/* Webhooks Config */}
+                <div className="mb-8 p-6 bg-background shadow-neu-inset-small rounded-3xl border border-[#A3B1C6]/10">
+                  <h4 className="text-sm font-bold flex items-center gap-2 mb-4"><Webhook size={18} className="text-purple-500"/> Outbound Webhooks (Slack/Teams)</h4>
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative">
+                      <Link size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                      <Input defaultValue="https://hooks.slack.com/services/T000/B000/XXX" className="h-12 w-full rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm pl-12 pr-4 focus-visible:ring-accent" />
+                    </div>
+                    <Button variant="outline" className="h-12 rounded-2xl shadow-neu-extruded hover:text-accent font-bold px-6 flex items-center gap-2"><Play size={16}/> Test Payload</Button>
+                  </div>
+                  <div className="flex gap-4 mt-4 text-xs font-bold">
+                    <label className="flex items-center gap-2"><input type="checkbox" defaultChecked className="accent-accent w-4 h-4 rounded" /> Critical Errors</label>
+                    <label className="flex items-center gap-2"><input type="checkbox" defaultChecked className="accent-accent w-4 h-4 rounded" /> Asset Movements</label>
+                    <label className="flex items-center gap-2"><input type="checkbox" className="accent-accent w-4 h-4 rounded" /> Ticket Updates</label>
+                  </div>
+                </div>
+
+                {/* Email Alerts Grid */}
+                <h4 className="text-sm font-bold flex items-center gap-2 mb-4 px-2"><Mail size={18} className="text-blue-500"/> Event Matrix (Email)</h4>
+                <div className="bg-background shadow-neu-extruded rounded-3xl overflow-hidden border border-[#A3B1C6]/20">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-background shadow-neu-inset-small">
+                        <th className="p-4 text-xs font-black uppercase text-muted-foreground tracking-wider">Event Type</th>
+                        <th className="p-4 text-xs font-black uppercase text-muted-foreground tracking-wider text-center">Admin</th>
+                        <th className="p-4 text-xs font-black uppercase text-muted-foreground tracking-wider text-center">Technician</th>
+                        <th className="p-4 text-xs font-black uppercase text-muted-foreground tracking-wider text-center">Manager</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm font-medium">
+                      <tr className="border-b border-[#A3B1C6]/10">
+                        <td className="p-4 font-bold flex items-center gap-2"><AlertTriangle size={16} className="text-red-500"/> Server Offline</td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                      </tr>
+                      <tr className="border-b border-[#A3B1C6]/10">
+                        <td className="p-4 font-bold flex items-center gap-2"><Check size={16} className="text-green-500"/> Warranty Expiring</td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                      </tr>
+                      <tr>
+                        <td className="p-4 font-bold flex items-center gap-2"><Layers size={16} className="text-blue-500"/> Daily Digest</td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                        <td className="p-4 text-center"><input type="checkbox" defaultChecked className="accent-accent w-5 h-5 rounded cursor-pointer" /></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+              </div>
+            </div>
+          ) : activeTab === "Security" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Identity & Access Management</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Authentication, 2FA, SSO, and session controls</p>
+                  </div>
+                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
+                    <Save size={16} /> Save Changes
+                  </Button>
+                </div>
+                
+                {/* Auth Controls */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  <div className="bg-background shadow-neu-inset-small p-6 rounded-3xl space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-500 shadow-neu-inset-small"><Lock size={20} /></div>
+                      <h4 className="font-bold text-sm">Authentication Rules</h4>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Session Timeout</label>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>15 Minutes (High Security)</option>
+                        <option>1 Hour</option>
+                        <option>8 Hours (Standard)</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center justify-between h-12 bg-background shadow-neu-extruded rounded-2xl px-4 border border-red-500/10">
+                      <div>
+                        <span className="text-xs font-bold text-foreground block">Enforce 2FA</span>
+                        <span className="text-[9px] text-muted-foreground block">Require Authenticator App</span>
+                      </div>
+                      <div className="w-10 h-5 bg-background shadow-neu-inset-deep rounded-full relative cursor-pointer"><div className="absolute top-1 bottom-1 w-3 rounded-full shadow-md transition-all duration-300 bg-red-500 left-6"></div></div>
+                    </div>
+                  </div>
+
+                  {/* SSO */}
+                  <div className="bg-background shadow-neu-inset-small p-6 rounded-3xl space-y-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-500 shadow-neu-inset-small"><Shield size={20} /></div>
+                      <div>
+                        <h4 className="font-bold text-sm">Enterprise SSO</h4>
+                        <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-[9px] font-bold rounded uppercase">Active</span>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">SSO Provider</label>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>Azure Active Directory (OIDC)</option>
+                        <option>Okta (SAML 2.0)</option>
+                        <option>Google Workspace</option>
+                      </select>
+                    </div>
+                    <Button variant="outline" className="w-full h-12 rounded-2xl shadow-neu-extruded font-bold text-xs">Configure Identity Provider</Button>
+                  </div>
+                </div>
+
+                {/* API Keys */}
+                <h4 className="text-sm font-bold flex items-center gap-2 mb-4 px-2"><Key size={18} className="text-accent"/> Service Accounts & API Keys</h4>
+                <div className="bg-background shadow-neu-inset-small p-4 rounded-3xl">
+                  <div className="bg-background shadow-neu-extruded p-4 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                      <h5 className="font-bold text-sm">Audira Scanner Agent</h5>
+                      <p className="text-[10px] font-mono text-muted-foreground mt-1">Key: sk_live_8f92...a1b2</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold text-muted-foreground bg-background shadow-neu-inset px-3 py-1 rounded-lg">Last used: 2 mins ago</span>
+                      <Button variant="ghost" className="h-8 w-8 p-0 rounded-lg text-red-500 shadow-neu-extruded hover:shadow-neu-hover"><Trash2 size={14}/></Button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          ) : activeTab === "Integrations" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Integration Ecosystem</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Connect with external ITSM, discovery, and monitoring tools</p>
+                  </div>
+                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
+                    <LayoutSidebar size={16} /> Browse Plugin Store
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  {/* Plugin 1 */}
+                  <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center bg-background p-6 rounded-3xl shadow-neu-inset-small border border-[#A3B1C6]/10">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-white font-black text-xl shadow-lg shrink-0">SN</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="text-sm font-bold text-foreground">ServiceNow ITSM</h4>
+                        <span className="px-2 py-0.5 bg-green-500/10 text-green-500 text-[9px] font-bold rounded uppercase flex items-center gap-1"><Check size={10}/> Connected</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">Two-way sync for incidents and CMDB assets.</p>
+                      <p className="text-[9px] font-bold text-muted-foreground">Last Sync: 4 mins ago (Auto)</p>
+                    </div>
+                    <Button variant="outline" className="h-10 rounded-xl shadow-neu-extruded border-none font-bold text-xs shrink-0"><SettingsIcon size={14} className="mr-2"/> Manage</Button>
+                  </div>
+                  
+                  {/* Plugin 2 */}
+                  <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center bg-background p-6 rounded-3xl shadow-neu-inset-small border border-[#A3B1C6]/10">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-black text-xl shadow-lg shrink-0">VM</div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="text-sm font-bold text-foreground">VMware vCenter</h4>
+                        <span className="px-2 py-0.5 bg-[#A3B1C6]/20 text-muted-foreground text-[9px] font-bold rounded uppercase">Not Configured</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">Auto-discover virtual machines and hypervisors.</p>
+                    </div>
+                    <Button className="h-10 rounded-xl bg-background shadow-neu-extruded border-none font-bold text-xs shrink-0 text-accent"><Link size={14} className="mr-2"/> Connect</Button>
+                  </div>
+
+                  {/* Plugin 3 */}
+                  <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-center bg-background p-6 rounded-3xl shadow-neu-inset-small border border-[#A3B1C6]/10">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-black text-xl shadow-lg shrink-0"><Monitor size={24}/></div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <h4 className="text-sm font-bold text-foreground">SolarWinds</h4>
+                        <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[9px] font-bold rounded uppercase flex items-center gap-1"><AlertTriangle size={10}/> Error</span>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground line-clamp-2 mb-2">Network monitoring and switch port mapping.</p>
+                      <p className="text-[9px] font-bold text-red-500">Connection timeout. Check credentials.</p>
+                    </div>
+                    <Button variant="outline" className="h-10 rounded-xl shadow-neu-extruded border-none font-bold text-xs shrink-0"><RefreshCw size={14} className="mr-2"/> Reconnect</Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : activeTab === "Backup & Restore" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="flex justify-between items-center mb-8">
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Disaster Recovery Strategy</h2>
+                    <p className="text-xs text-muted-foreground mt-1">Manage snapshots, storage targets, and retention rules</p>
+                  </div>
+                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
+                    <UploadCloud size={16} /> Run Manual Backup
+                  </Button>
+                </div>
+                
+                {/* Storage Metrics */}
+                <div className="mb-8">
+                  <div className="flex justify-between text-xs font-bold mb-2">
+                    <span className="text-muted-foreground uppercase tracking-wider flex items-center gap-2"><Cloud size={14}/> S3 Bucket Storage</span>
+                    <span className="text-foreground">8.4 GB / 50 GB Used</span>
+                  </div>
+                  <div className="h-4 w-full bg-background shadow-neu-inset-deep rounded-full overflow-hidden p-1">
+                    <div className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-accent to-purple-500" style={{ width: '16.8%' }}></div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                  <div className="lg:col-span-2 space-y-6 bg-background shadow-neu-inset-small p-6 rounded-3xl">
+                    <h4 className="font-bold text-sm mb-4">Backup Policy</h4>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Automated Schedule</label>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>Daily at 02:00 UTC</option>
+                        <option>Every 6 Hours</option>
+                        <option>Weekly (Sunday)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Storage Target</label>
+                      <select className="w-full h-12 px-4 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold text-foreground outline-none appearance-none relative cursor-pointer">
+                        <option>AWS S3 (us-east-1)</option>
+                        <option>Azure Blob Storage</option>
+                        <option>Local NAS (/mnt/backup)</option>
+                      </select>
+                    </div>
+                    <div className="flex items-center justify-between h-12 bg-background shadow-neu-extruded rounded-2xl px-4 mt-2">
+                      <span className="text-xs font-bold text-foreground flex items-center gap-2">Encrypt Archives (AES-256)</span>
+                      <div className="w-10 h-5 bg-background shadow-neu-inset-deep rounded-full relative cursor-pointer"><div className="absolute top-1 bottom-1 w-3 rounded-full shadow-md transition-all duration-300 bg-accent left-6"></div></div>
+                    </div>
+                  </div>
+                  
+                  <div className="lg:col-span-3">
+                    <h4 className="text-sm font-bold flex items-center gap-2 mb-4 px-2"><HardDrive size={18} className="text-accent"/> Recent Snapshots</h4>
+                    <div className="bg-background shadow-neu-extruded rounded-3xl overflow-hidden border border-[#A3B1C6]/20">
+                      <table className="w-full text-left border-collapse">
+                        <tbody className="text-xs font-medium">
+                          <tr className="border-b border-[#A3B1C6]/10 hover:bg-[#A3B1C6]/5 transition-colors">
+                            <td className="p-4 font-bold">backup_core_20250530_0200.enc</td>
+                            <td className="p-4 text-muted-foreground">30 May, 02:00 AM</td>
+                            <td className="p-4 font-mono text-right">1.2 GB</td>
+                            <td className="p-4 text-right"><Button variant="ghost" className="h-8 text-accent font-bold">Restore</Button></td>
+                          </tr>
+                          <tr className="border-b border-[#A3B1C6]/10 hover:bg-[#A3B1C6]/5 transition-colors">
+                            <td className="p-4 font-bold">backup_core_20250529_0200.enc</td>
+                            <td className="p-4 text-muted-foreground">29 May, 02:00 AM</td>
+                            <td className="p-4 font-mono text-right">1.1 GB</td>
+                            <td className="p-4 text-right"><Button variant="ghost" className="h-8 text-accent font-bold">Restore</Button></td>
+                          </tr>
+                          <tr className="hover:bg-[#A3B1C6]/5 transition-colors">
+                            <td className="p-4 font-bold">backup_core_20250528_0200.enc</td>
+                            <td className="p-4 text-muted-foreground">28 May, 02:00 AM</td>
+                            <td className="p-4 font-mono text-right">1.1 GB</td>
+                            <td className="p-4 text-right"><Button variant="ghost" className="h-8 text-accent font-bold">Restore</Button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          ) : activeTab === "Maintenance" ? (
+            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8">
+                <div className="mb-8">
+                  <h2 className="text-xl font-bold text-foreground">Maintenance Operations</h2>
+                  <p className="text-xs text-muted-foreground mt-1">System health, index rebuilding, and dangerous actions</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                  {/* Health */}
+                  <div className="bg-background shadow-neu-inset-small p-6 rounded-3xl space-y-4">
+                    <h4 className="font-bold text-sm mb-4">Live Resources</h4>
+                    <div>
+                      <div className="flex justify-between text-[10px] font-bold mb-1 uppercase text-muted-foreground"><span>CPU Load</span><span>32%</span></div>
+                      <div className="h-2 w-full bg-background shadow-neu-inset-deep rounded-full overflow-hidden p-0.5"><div className="h-full rounded-full bg-green-500" style={{ width: '32%' }}></div></div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-[10px] font-bold mb-1 uppercase text-muted-foreground"><span>Memory (RAM)</span><span>78%</span></div>
+                      <div className="h-2 w-full bg-background shadow-neu-inset-deep rounded-full overflow-hidden p-0.5"><div className="h-full rounded-full bg-yellow-500" style={{ width: '78%' }}></div></div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-[10px] font-bold mb-1 uppercase text-muted-foreground"><span>Database Connections</span><span>142 / 500</span></div>
+                      <div className="h-2 w-full bg-background shadow-neu-inset-deep rounded-full overflow-hidden p-0.5"><div className="h-full rounded-full bg-accent" style={{ width: '28%' }}></div></div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="space-y-4 flex flex-col justify-center">
+                    <div className="flex items-center justify-between bg-yellow-500/10 border border-yellow-500/20 p-5 rounded-2xl">
+                      <div>
+                        <h4 className="text-yellow-600 font-bold text-sm">Enter Maintenance Mode</h4>
+                        <p className="text-[10px] text-muted-foreground mt-1">Blocks non-admins. Displays 503 Maintenance page.</p>
+                      </div>
+                      <div className="w-12 h-6 bg-background shadow-neu-inset-deep rounded-full relative cursor-pointer"><div className="absolute top-1 bottom-1 w-4 rounded-full shadow-md transition-all duration-300 bg-[#A3B1C6]/50 left-1"></div></div>
+                    </div>
+                    <Button variant="outline" className="w-full h-12 rounded-2xl shadow-neu-extruded border-none font-bold flex items-center justify-start px-6 gap-3">
+                      <RefreshCw size={16} className="text-blue-500" /> Re-index Search Engine (Elasticsearch)
+                    </Button>
+                    <Button variant="outline" className="w-full h-12 rounded-2xl shadow-neu-extruded border-none font-bold flex items-center justify-start px-6 gap-3">
+                      <Trash2 size={16} className="text-orange-500" /> Prune Orphaned Attachments
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Danger Zone */}
+                <div className="border border-red-500/20 rounded-3xl p-6 bg-red-500/5">
+                  <h4 className="text-red-500 font-black flex items-center gap-2 mb-2"><AlertTriangle size={18}/> Danger Zone</h4>
+                  <p className="text-xs text-muted-foreground mb-6">These actions are irreversible. Proceed with extreme caution.</p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-background shadow-neu-extruded p-4 rounded-2xl">
+                    <div>
+                      <h5 className="font-bold text-sm">Factory Reset</h5>
+                      <p className="text-[10px] text-muted-foreground">Wipes all databases, assets, tickets, and configurations.</p>
+                    </div>
+                    <Button variant="destructive" className="rounded-xl shadow-md font-bold h-10 px-6 shrink-0 bg-red-500 hover:bg-red-600">Wipe Data</Button>
+                  </div>
+                </div>
+            </div>
+          </div>
           ) : (
             <div className="flex items-center justify-center h-64 bg-background shadow-neu-extruded rounded-[32px] p-8 border-neu text-center">
               <div>
@@ -316,7 +746,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Right Side Panel */}
-      <div className="w-[320px] flex flex-col gap-6 h-full shrink-0 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      <div className="w-full lg:w-[320px] flex flex-col gap-6 lg:shrink-0">
         
         {/* System Information Card */}
         <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-6">

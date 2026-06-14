@@ -30,6 +30,16 @@ model Vendor {
   email     String?
   phone     String?
   status    String   @default("Active")
+  
+  // Enterprise VRM Fields
+  rating              Float?
+  contractExpiry      DateTime?
+  totalSpent          Float?
+  accountManagerName  String?
+  accountManagerEmail String?
+  techSupportL1Phone  String?
+  techSupportL2Phone  String?
+  
   assets    Asset[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -80,11 +90,36 @@ model Asset {
   salvageValue    Float?
   usefulLifeYears Int?
   
+  // Enterprise ITAM: Lifecycle & Maintenance
+  lifecycleState  String   @default("Production") // Procurement, In-Transit, In-Storage, Production, RMA, Retired
+  eolDate         DateTime?
+  eosDate         DateTime?
+  slaLevel        String?  // e.g., 24x7x4 NBD
+  contractNumber  String?
+  
+  // Enterprise ITAM: CMDB & Topology
+  businessApp     String?  // e.g., Core Banking System
+  businessOwner   String?
+  techOwner       String?
+  upstreamPowerId String?  // ID of upstream PDU or UPS
+  upstreamNetId   String?  // ID of upstream Switch
+  
+  // Enterprise ITAM: FinOps & Audit
+  costCenter      String?
+  ownershipType   String   @default("Owned") // Owned, Leased, Cloud
+  lastAuditDate   DateTime?
+  
+  // Enterprise ITAM: Capacity & Environment
+  powerWatts      Float?
+  weightKg        Float?
+  coolingBTU      Float?
+  
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   tickets    Ticket[]
   movements  Movement[]
   ips        IPAddress[]
+  licenses   AssetLicense[]
 }
 
 model Ticket {
@@ -98,11 +133,46 @@ model Ticket {
   assetId     String?
   asset       Asset?   @relation(fields: [assetId], references: [id])
   
-  reportedBy  String?
-  assignedTo  String?
+  reportedBy      String?
+  assignedTo      String?
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  resolutionNotes String?
+  resolvedAt      DateTime?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model License {
+  id              String   @id @default(cuid())
+  name            String
+  productKey      String?
+  vendor          String?
+  totalSeats      Int      @default(1)
+  purchaseCost    Float?
+  
+  purchaseDate    DateTime?
+  expiryDate      DateTime?
+  
+  assets          AssetLicense[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AssetLicense {
+  id         String   @id @default(cuid())
+  
+  assetId    String
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  
+  licenseId  String
+  license    License  @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+  
+  assignedAt DateTime @default(now())
+  notes      String?
+  
+  @@unique([assetId, licenseId])
 }
 
 model Movement {

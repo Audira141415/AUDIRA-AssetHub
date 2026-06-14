@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -16,7 +16,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     //   return NextResponse.json({ error: "Forbidden: Admins only" }, { status: 403 });
     // }
 
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { toLocationId, notes } = body;
     const user = session.user.name || "System User";

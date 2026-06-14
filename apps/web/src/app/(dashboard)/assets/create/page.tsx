@@ -7,9 +7,9 @@ import Link from "next/link"
 import { 
   ChevronRight, CheckCircle2, Server, Settings, MapPin, DollarSign, ArrowLeft, Loader2
 } from "lucide-react"
-import { getFullAssetDetails } from "@/lib/mock-data"
 import { apiClient } from "@/lib/api-client"
 import { useRouter } from "next/navigation"
+import { HeroSection } from "@/components/ui/hero-section"
 
 export default function CreateAssetPage() {
   const [step, setStep] = useState(1)
@@ -121,15 +121,17 @@ export default function CreateAssetPage() {
       
       {/* Header */}
       <div>
-        <Link href="/assets" className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-accent mb-4 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Assets
-        </Link>
-        <h1 className="text-3xl font-display font-bold text-foreground">
-          {editId ? `Edit Asset: ${editId}` : "Create New Asset"}
-        </h1>
-        <p className="text-muted-foreground font-medium mt-1">
-          {editId ? "Update equipment details in your data center inventory." : "Add a new equipment to your data center inventory using this wizard."}
-        </p>
+        <div className="flex items-center text-sm text-muted-foreground font-bold tracking-wider mb-4">
+          <Link href="/assets" className="hover:text-accent transition-colors flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to Assets
+          </Link>
+        </div>
+        <HeroSection 
+          compact 
+          title={editId ? `Edit Asset: ${editId}` : "Create New Asset"}
+          description={editId ? "Update equipment details in your data center inventory." : "Add a new equipment to your data center inventory using this wizard."}
+          icon={<Server className="w-8 h-8 text-accent" />}
+        />
       </div>
 
       {/* Wizard Indicator */}

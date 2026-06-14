@@ -8,11 +8,14 @@ import {
   ChevronRight, Edit2, ArrowRightLeft, Copy, Printer, Download, QrCode, Trash2, 
   Server, MapPin, Layers, Cpu, HardDrive, Network, Zap, Settings, ShieldAlert, 
   Clock, CheckCircle2, Pen, Plus, Minus, FilePlus, MoreHorizontal, AlertTriangle, FileText, Phone, Mail, FileDown, Copy as CopyIcon,
-  Info, Shield, Paperclip, History, ListChecks, Eye, UploadCloud, Image as ImageIcon, FileSpreadsheet
+  Info, Shield, Paperclip, History, ListChecks, Eye, UploadCloud, Image as ImageIcon, FileSpreadsheet,
+  ArrowLeft
 } from "lucide-react"
-import { getFullAssetDetails, getAssetImage, deleteAsset, cloneAsset, updateAssetLocation } from "@/lib/mock-data"
 import { apiClient } from "@/lib/api-client"
+import { getAssetImage } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { HeroSection } from "@/components/ui/hero-section"
+import Link from "next/link"
 
 export default function EnterpriseAssetDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -46,26 +49,56 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
         const res = await apiClient.get(`/assets/${id}`);
         const apiData = res.data;
         
-        // Merge API data with mock UI format
-        const mockBase = getFullAssetDetails(apiData.asset_tag || id);
-        
         const mappedAsset = {
-          ...mockBase.details,
           id: apiData.id,
-          tag: apiData.asset_tag,
-          hostname: apiData.hostname || mockBase.details.hostname,
-          serial: apiData.serial_number || mockBase.details.serial,
-          manufacturer: apiData.manufacturer || mockBase.details.manufacturer,
-          model: apiData.model || mockBase.details.model,
-          status: apiData.status || mockBase.details.status,
-          vendor: apiData.vendor ? apiData.vendor.name : mockBase.details.vendor,
-          purchaseDate: apiData.purchase_date || mockBase.details.purchaseDate,
-          warrantyStart: apiData.warranty_start || mockBase.details.warrantyStart,
-          warrantyEnd: apiData.warranty_end || mockBase.details.warrantyEnd,
-          category: apiData.category ? apiData.category.name : mockBase.details.category,
-          name: apiData.model || mockBase.details.name,
-          modelDesc: apiData.manufacturer && apiData.model ? `${apiData.manufacturer} ${apiData.model}` : mockBase.details.modelDesc,
-          locationQuick: "Batam DC • Floor • No U-Position", // Default for Racks or update dynamically
+          tag: apiData.tag,
+          assetNumber: apiData.tag,
+          hostname: apiData.hostname || "N/A",
+          serial: apiData.serial_number || "N/A",
+          manufacturer: apiData.manufacturer || "N/A",
+          model: apiData.model || "N/A",
+          status: apiData.status || "Active",
+          vendor: apiData.vendor ? apiData.vendor.name : "N/A",
+          purchaseDate: apiData.purchaseDate || "N/A",
+          purchaseCost: apiData.purchaseCost || 0,
+          currency: "IDR",
+          currentValue: apiData.purchaseCost || 0,
+          warrantyStart: apiData.warranty_start || "N/A",
+          warrantyEnd: apiData.warranty_end || "N/A",
+          warrantyRemaining: apiData.warranty || "N/A",
+          category: apiData.category ? apiData.category.name : "N/A",
+          name: apiData.model || "Asset",
+          modelDesc: apiData.manufacturer && apiData.model ? `${apiData.manufacturer} ${apiData.model}` : "N/A",
+          site: apiData.location ? apiData.location.name : "N/A",
+          building: apiData.location ? apiData.location.name : "N/A",
+          floor: "Floor",
+          room: "Room",
+          rack: apiData.rack || "Floor",
+          uPosition: apiData.uPosition || "1",
+          locationQuick: `${apiData.location?.name || 'N/A'} • ${apiData.rack || 'Floor'}`,
+          lifecycle: apiData.lifecycleState || "Production",
+          criticality: "High",
+          dept: "IT",
+          owner: "IT Admin",
+          poNumber: "N/A",
+          invoiceNumber: "N/A",
+          depreciation: "Straight Line",
+          businessService: apiData.businessApp || "Infrastructure",
+          appOwner: apiData.businessOwner || "IT Ops",
+          techOwner: apiData.techOwner || "IT Infra",
+          env: "Production",
+          contractNum: apiData.contractNumber || "N/A",
+          supportVendor: apiData.vendor ? apiData.vendor.name : "N/A",
+          supportEmail: "support@vendor.com",
+          supportPhone: "+62 000000000",
+          eolDate: apiData.eolDate ? new Date(apiData.eolDate).toLocaleDateString() : "N/A",
+          eosDate: apiData.eosDate ? new Date(apiData.eosDate).toLocaleDateString() : "N/A",
+          slaLevel: apiData.slaLevel || "N/A",
+          costCenter: apiData.costCenter || "N/A",
+          ownershipType: apiData.ownershipType || "Owned",
+          powerWatts: apiData.powerWatts || 0,
+          weightKg: apiData.weightKg || 0,
+          coolingBTU: apiData.coolingBTU || 0,
         };
 
         setAsset(mappedAsset);
@@ -80,7 +113,12 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             "Color": "Black (RAL 9005)"
           });
         } else {
-          setSpecs(mockBase.specs);
+          setSpecs({
+            "Memory": "N/A",
+            "CPU": "N/A",
+            "Storage": "N/A",
+            "Power": "N/A",
+          });
         }
         
         setMoveData({
@@ -99,17 +137,7 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
         }
 
       } catch (err: any) {
-        console.warn("API fetch failed, using fallback mock", err);
-        const mockFallback = getFullAssetDetails(id);
-        setAsset(mockFallback.details);
-        setSpecs(mockFallback.specs);
-        setMoveData({
-          site: mockFallback.details.site,
-          building: mockFallback.details.building,
-          room: mockFallback.details.room,
-          rack: mockFallback.details.rack,
-          uPosition: mockFallback.details.uPosition.toString()
-        });
+        console.warn("API fetch failed", err);
       } finally {
         setIsLoading(false);
       }
@@ -125,23 +153,17 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
 
   const handleDelete = async () => {
     try {
-      if (asset.id) {
+      if (asset?.id) {
         await apiClient.delete(`/assets/${asset.id}`)
       }
       router.push("/assets")
     } catch (err) {
-      console.error("Delete failed via API, falling back to mock", err)
-      if (deleteAsset(asset.tag)) {
-        router.push("/assets")
-      }
+      console.error("Delete failed via API", err)
     }
   }
 
   const handleClone = () => {
-    const newTag = cloneAsset(asset.tag)
-    if (newTag) {
-      router.push(`/assets/${newTag}`)
-    }
+    console.warn("Clone not implemented via API yet")
   }
 
   const handleMove = async () => {
@@ -155,11 +177,7 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
       setIsMoveDialogOpen(false);
       window.location.reload();
     } catch (err) {
-      console.error("Move failed via API, falling back to mock", err);
-      if (updateAssetLocation(asset.tag, moveData.site, moveData.building, moveData.room, moveData.rack, moveData.uPosition)) {
-        setIsMoveDialogOpen(false)
-        window.location.reload()
-      }
+      console.error("Move failed via API", err);
     }
   }
 
@@ -217,9 +235,22 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
           </CardHeader>
           <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
             <DataRow label="Business Service" value={asset.businessService} />
-            <DataRow label="Application Owner" value={asset.appOwner} />
+            <DataRow label="Business Owner" value={asset.appOwner} />
             <DataRow label="Technical Owner" value={asset.techOwner} />
+            <DataRow label="Cost Center" value={asset.costCenter} />
+            <DataRow label="Ownership Type" value={asset.ownershipType} />
             <DataRow label="Environment" value={<Badge text={asset.env} color="accent" />} />
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8">
+            <CardTitle className="text-lg font-bold text-foreground">Capacity & Environment</CardTitle>
+          </CardHeader>
+          <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12">
+            <DataRow label="Max Power Draw" value={`${asset.powerWatts} Watts`} />
+            <DataRow label="Heat Output" value={`${asset.coolingBTU} BTU/hr`} />
+            <DataRow label="Physical Weight" value={`${asset.weightKg} kg`} />
           </CardContent>
         </Card>
       </div>
@@ -335,6 +366,9 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
         <DataRow label="Warranty Start" value={asset.warrantyStart} />
         <DataRow label="Warranty End" value={asset.warrantyEnd} />
         <DataRow label="Days Remaining" value={asset.warrantyRemaining} bold textClass="text-accent" />
+        <DataRow label="SLA Level" value={<Badge text={asset.slaLevel} color="purple" />} />
+        <DataRow label="End of Life (EOL)" value={asset.eolDate} />
+        <DataRow label="End of Support (EOS)" value={asset.eosDate} />
         <DataRow label="Contract Number" value={asset.contractNum} link />
         <DataRow label="Vendor Support" value={asset.supportVendor} bold />
         <DataRow label="Support Email" value={asset.supportEmail} link />
@@ -511,54 +545,50 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
   ];
 
   return (
-    <div className="space-y-8 pb-12">
-      <div className="bg-background shadow-neu-extruded border-neu rounded-[32px] p-8 mt-2">
-        <div className="flex flex-col xl:flex-row justify-between xl:items-center gap-6">
-          <div className="flex gap-6 items-center">
-            <div className="w-16 h-16 rounded-2xl bg-background shadow-neu-inset flex items-center justify-center shrink-0 border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 overflow-hidden">
-              <img src={getAssetImage(asset.category)} alt={asset.category} className="w-full h-full object-cover scale-[1.3]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex flex-wrap items-center gap-3 mb-1">
-                <h1 className="text-3xl font-display font-bold text-foreground whitespace-nowrap truncate">{asset.tag}</h1>
-                <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-lg uppercase tracking-wider shadow-sm whitespace-nowrap">
-                  NIB: {asset.assetNumber || "-"}
-                </span>
-                <span className="px-3 py-1 bg-[#38B2AC]/10 text-[#38B2AC] text-xs font-bold rounded-lg uppercase tracking-wider shadow-sm whitespace-nowrap">
-                  {asset.status}
-                </span>
-              </div>
-              <p className="text-lg font-semibold text-muted-foreground truncate">{asset.modelDesc}</p>
-              <div className="flex items-center gap-2 mt-3 text-sm font-semibold text-foreground/70 truncate">
-                <MapPin className="w-4 h-4 text-accent shrink-0" /> {asset.locationQuick}
-              </div>
-            </div>
+    <div className="space-y-8 pb-12 p-8 pt-4">
+      <div className="max-w-[1400px] mx-auto w-full">
+        <div className="flex items-center text-sm text-muted-foreground font-bold tracking-wider mb-4">
+          <Link href="/assets" className="hover:text-accent transition-colors flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back to Assets
+          </Link>
+          <ChevronRight className="w-4 h-4 mx-2 opacity-50" />
+          <span className="text-accent">{asset.tag}</span>
+        </div>
+
+        <HeroSection 
+          compact 
+          title={asset.tag} 
+          description={asset.modelDesc}
+          icon={<Server className="w-8 h-8 text-accent" />}
+        >
+          <span className="px-3 py-1.5 bg-accent/10 text-accent text-xs font-bold rounded-lg uppercase tracking-wider border border-accent/20">
+            NIB: {asset.assetNumber || "-"}
+          </span>
+          <span className="px-3 py-1.5 bg-[#38B2AC]/10 text-[#38B2AC] text-xs font-bold rounded-lg uppercase tracking-wider border border-[#38B2AC]/20">
+            {asset.status}
+          </span>
+          <div className="flex items-center gap-2 text-sm font-bold text-foreground/70 ml-2">
+            <MapPin className="w-4 h-4 text-accent shrink-0" /> {asset.locationQuick}
           </div>
 
-          <div className="flex flex-wrap items-center justify-start xl:justify-end gap-3 mt-6 xl:mt-0">
-            <Button variant="outline" onClick={() => router.push(`/assets/create?edit=${asset.tag}`)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-foreground hover:text-accent">
+          <div className="flex flex-wrap items-center gap-2 ml-auto mt-4 lg:mt-0">
+            <Button variant="outline" onClick={() => router.push(`/assets/create?edit=${asset.tag}`)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs text-foreground hover:text-accent">
               <Edit2 className="h-4 w-4 mr-2" /> Edit
             </Button>
-            <Button variant="outline" onClick={() => setIsMoveDialogOpen(true)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-foreground hover:text-accent">
+            <Button variant="outline" onClick={() => setIsMoveDialogOpen(true)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs text-foreground hover:text-accent">
               <ArrowRightLeft className="h-4 w-4 mr-2" /> Move
             </Button>
-            <Button variant="outline" onClick={handleClone} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-foreground hover:text-accent">
-              <CopyIcon className="h-4 w-4 mr-2" /> Clone
+            <Button variant="outline" onClick={() => window.print()} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs text-foreground hover:text-accent hidden sm:flex">
+              <FileDown className="h-4 w-4 mr-2" /> Export
             </Button>
-            <Button variant="outline" onClick={() => window.print()} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-foreground hover:text-accent hidden sm:flex">
-              <Printer className="h-4 w-4 mr-2" /> Print
+            <Button variant="default" className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs bg-accent text-white hover:bg-accent-light" onClick={() => setActiveTab("QR Code")}>
+              <QrCode className="h-4 w-4 mr-2" /> QR
             </Button>
-            <Button variant="outline" onClick={() => window.print()} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-foreground hover:text-accent hidden sm:flex">
-              <FileDown className="h-4 w-4 mr-2" /> Export PDF
-            </Button>
-            <Button variant="default" className="h-10 px-5 rounded-xl shadow-neu-extruded border-neu font-bold text-sm bg-accent text-white hover:bg-accent-light" onClick={() => setActiveTab("QR Code")}>
-              <QrCode className="h-4 w-4 mr-2" /> Generate QR
-            </Button>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(true)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-red-500 hover:text-red-600 ml-2">
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(true)} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-sm text-red-500 hover:text-red-600">
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>
-        </div>
+        </HeroSection>
       </div>
 
       {/* Delete Confirmation Modal */}
