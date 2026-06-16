@@ -97,7 +97,7 @@ export default function CreateAssetPage() {
 
     try {
       if (editId) {
-        // Mock PUT for now
+        // Call real PUT endpoint
         console.log("Updating:", payload);
         await apiClient.put(`/assets/${editId}`, payload);
         router.push(`/assets/${editId}`);

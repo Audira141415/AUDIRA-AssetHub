@@ -49,7 +49,8 @@ export default function MaintenancePage() {
     fetchAssets();
   }, []);
 
-  const columns = ["Open", "In Progress", "Closed"]
+  const uniqueStatuses = Array.from(new Set(tickets.map(t => t.status)));
+  const columns = Array.from(new Set(["Open", "In Progress", "Closed", ...uniqueStatuses]));
 
   const getPriorityColor = (priority: string) => {
     switch(priority) {

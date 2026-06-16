@@ -6,13 +6,24 @@ import { FileDown, Database, ActivitySquare } from"lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 
 export default function ReportsPage() {
-  const handleDownload = (endpoint: string, filename: string) => {
-    // In a real app with strict auth, we might need to handle token injection here.
-    // Since this is a direct GET stream, we'll use window.location or fetch + blob.
-    // Fetch + Blob is safer for injecting Authorization headers.
-    
-    // Quick mock for now without auth header logic in browser download:
-    window.location.href = `/api/reports/${endpoint}`
+  const handleDownload = async (endpoint: string, filename: string) => {
+    try {
+      const res = await fetch(`/api/reports/${endpoint}`);
+      if (!res.ok) throw new Error("Download failed");
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading file", error);
+      alert("Failed to download report.");
+    }
   }
 
   return (

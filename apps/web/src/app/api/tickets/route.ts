@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { sendTelegramMessage } from '@/lib/notifications/telegram'
+import { sendWhatsAppMessage } from '@/lib/notifications/whatsapp'
+import { NotificationTemplates } from '@/lib/notifications/templates'
 
 export async function GET(request: Request) {
   try {
@@ -50,6 +53,23 @@ export async function POST(request: Request) {
         asset: true
       }
     })
+
+    // Send notifications for High/Critical tickets
+    if (newTicket.priority === 'Critical' || newTicket.priority === 'High') {
+      const templateData = {
+        id: newTicket.id,
+        title: newTicket.title,
+        priority: newTicket.priority,
+        description: newTicket.description,
+        assetTag: newTicket.asset?.tag
+      };
+      
+      const tgMessage = NotificationTemplates.ticketCreated(templateData, 'telegram');
+      sendTelegramMessage(tgMessage).catch(console.error);
+      
+      const waMessage = NotificationTemplates.ticketCreated(templateData, 'whatsapp');
+      sendWhatsAppMessage(waMessage).catch(console.error);
+    }
 
     return NextResponse.json(newTicket, { status: 201 })
   } catch (error) {

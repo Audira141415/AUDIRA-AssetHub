@@ -30,6 +30,9 @@ export async function POST(request: Request) {
         name: body.name,
         code: body.code,
         description: body.description || null,
+        color: body.color || "#6C63FF",
+        icon: body.icon || "Layers",
+        parentId: body.parentId || null,
       }
     });
     

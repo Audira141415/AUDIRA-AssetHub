@@ -58,7 +58,7 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
     return <div className="p-8 text-center font-bold text-muted-foreground mt-10">Category not found</div>
   }
 
-  const parentCat = category.parent ? { name: "Parent Category" } : null // If we want to show parent details, we can fetch it, for now mock it.
+  const parentCat = category.parent ? { name: category.parent.name } : null;
   const IconComponent = iconMap[category.icon] || Layers
 
   const tabs = ["Overview", "Assets", "Templates", "History"]

@@ -37,7 +37,9 @@ import {
   Layers,
   Lock,
   Mail,
-  Webhook
+  Webhook,
+  MessageSquare,
+  Smartphone
 } from "lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 
@@ -63,6 +65,76 @@ export default function SettingsPage() {
     setToggles(prev => ({ ...prev, [key]: !prev[key] }))
   }
 
+  const [notificationSettings, setNotificationSettings] = useState({
+    TELEGRAM_BOT_TOKEN: '',
+    TELEGRAM_DEFAULT_CHAT_ID: '',
+    WA_PROVIDER_URL: '',
+    WA_API_KEY: '',
+    WA_DEFAULT_PHONE: ''
+  })
+  
+  const [isSavingNotifications, setIsSavingNotifications] = useState(false)
+
+  const [globalSettings, setGlobalSettings] = useState<Record<string, string>>({})
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Fetch settings on mount
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          setGlobalSettings(data)
+          
+          if (data.timeFormat) setTimeFormat(data.timeFormat)
+          if (data.measurementUnit) setMeasurementUnit(data.measurementUnit)
+          if (data.themePreference) setThemePreference(data.themePreference)
+          if (data.sidebarMode) setSidebarMode(data.sidebarMode)
+          if (data.tableDensity) setTableDensity(data.tableDensity)
+          
+          setNotificationSettings(prev => ({
+            TELEGRAM_BOT_TOKEN: data.TELEGRAM_BOT_TOKEN || '',
+            TELEGRAM_DEFAULT_CHAT_ID: data.TELEGRAM_DEFAULT_CHAT_ID || '',
+            WA_PROVIDER_URL: data.WA_PROVIDER_URL || '',
+            WA_API_KEY: data.WA_API_KEY || '',
+            WA_DEFAULT_PHONE: data.WA_DEFAULT_PHONE || ''
+          }))
+          
+          setToggles(prev => ({
+            thumbnails: data.thumbnails === 'false' ? false : true,
+            serialNumbers: data.serialNumbers === 'false' ? false : true,
+            gridView: data.gridView === 'true' ? true : false,
+            rememberPrefs: data.rememberPrefs === 'false' ? false : true,
+            systemTips: data.systemTips === 'false' ? false : true,
+          }))
+        }
+      })
+      .catch(console.error)
+  }, [])
+
+  const saveGenericSettings = async (category: string, additionalSettings: any = {}) => {
+    setIsSaving(true)
+    try {
+      const res = await fetch('/api/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, settings: additionalSettings })
+      })
+      if (res.ok) {
+        alert(`${category} settings saved successfully!`)
+      } else {
+        alert('Failed to save settings.')
+      }
+    } catch (e) {
+      console.error(e)
+      alert('Error saving settings.')
+    }
+    setIsSaving(false)
+  }
+
+  const saveNotificationSettings = async () => {
+    await saveGenericSettings('Notifications', notificationSettings);
+  }
   const tabs = ["General", "System", "Notifications", "Security", "Integrations", "Backup & Restore", "Maintenance"]
 
   return (
@@ -101,8 +173,9 @@ export default function SettingsPage() {
                     <h2 className="text-xl font-bold text-foreground">General Settings</h2>
                     <p className="text-xs text-muted-foreground mt-1">Configure general preferences for the system</p>
                   </div>
-                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs">
-                    Save Changes
+                  </div>
+                  <Button disabled={isSaving} onClick={() => saveGenericSettings("General", { timeFormat, measurementUnit, themePreference, sidebarMode, tableDensity, thumbnails: toggles.thumbnails, serialNumbers: toggles.serialNumbers, gridView: toggles.gridView })} className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs">
+                    {isSaving ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
 
@@ -402,8 +475,12 @@ export default function SettingsPage() {
                     <h2 className="text-xl font-bold text-foreground">Enterprise Notification Routing</h2>
                     <p className="text-xs text-muted-foreground mt-1">Multi-channel alerts and webhook integrations</p>
                   </div>
-                  <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
-                    <Save size={16} /> Save Changes
+                  <Button 
+                    onClick={saveNotificationSettings}
+                    disabled={isSavingNotifications}
+                    className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2"
+                  >
+                    <Save size={16} /> {isSavingNotifications ? 'Saving...' : 'Save Changes'}
                   </Button>
                 </div>
 
@@ -421,6 +498,66 @@ export default function SettingsPage() {
                     <label className="flex items-center gap-2"><input type="checkbox" defaultChecked className="accent-accent w-4 h-4 rounded" /> Critical Errors</label>
                     <label className="flex items-center gap-2"><input type="checkbox" defaultChecked className="accent-accent w-4 h-4 rounded" /> Asset Movements</label>
                     <label className="flex items-center gap-2"><input type="checkbox" className="accent-accent w-4 h-4 rounded" /> Ticket Updates</label>
+                  </div>
+                </div>
+
+                {/* Telegram Config */}
+                <div className="mb-8 p-6 bg-background shadow-neu-inset-small rounded-3xl border border-[#A3B1C6]/10">
+                  <h4 className="text-sm font-bold flex items-center gap-2 mb-4"><MessageSquare size={18} className="text-blue-500"/> Telegram Integration</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Bot Token</label>
+                      <Input 
+                        value={notificationSettings.TELEGRAM_BOT_TOKEN}
+                        onChange={(e) => setNotificationSettings(p => ({ ...p, TELEGRAM_BOT_TOKEN: e.target.value }))}
+                        placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz" 
+                        className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm px-4 focus-visible:ring-accent" 
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Default Chat ID</label>
+                      <Input 
+                        value={notificationSettings.TELEGRAM_DEFAULT_CHAT_ID}
+                        onChange={(e) => setNotificationSettings(p => ({ ...p, TELEGRAM_DEFAULT_CHAT_ID: e.target.value }))}
+                        placeholder="-1001234567890" 
+                        className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm px-4 focus-visible:ring-accent" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* WhatsApp Config */}
+                <div className="mb-8 p-6 bg-background shadow-neu-inset-small rounded-3xl border border-[#A3B1C6]/10">
+                  <h4 className="text-sm font-bold flex items-center gap-2 mb-4"><Smartphone size={18} className="text-green-500"/> WhatsApp Integration</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="md:col-span-2">
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Provider API URL (e.g. Fonnte, Wablas)</label>
+                      <Input 
+                        value={notificationSettings.WA_PROVIDER_URL}
+                        onChange={(e) => setNotificationSettings(p => ({ ...p, WA_PROVIDER_URL: e.target.value }))}
+                        placeholder="https://api.fonnte.com/send" 
+                        className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm px-4 focus-visible:ring-accent" 
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">API Key / Authorization</label>
+                      <Input 
+                        value={notificationSettings.WA_API_KEY}
+                        onChange={(e) => setNotificationSettings(p => ({ ...p, WA_API_KEY: e.target.value }))}
+                        placeholder="Your API Key" 
+                        type="password"
+                        className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm px-4 focus-visible:ring-accent" 
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Default Target Phone</label>
+                      <Input 
+                        value={notificationSettings.WA_DEFAULT_PHONE}
+                        onChange={(e) => setNotificationSettings(p => ({ ...p, WA_DEFAULT_PHONE: e.target.value }))}
+                        placeholder="6281234567890" 
+                        className="h-12 rounded-2xl bg-background shadow-neu-inset-deep border-none font-bold text-sm px-4 focus-visible:ring-accent" 
+                      />
+                    </div>
                   </div>
                 </div>
 

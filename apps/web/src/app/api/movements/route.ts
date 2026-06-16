@@ -57,8 +57,15 @@ export async function POST(request: Request) {
     
     // Also update the asset's location
     if (body.toLoc) {
-      // For simplicity, we just save the string. Ideally, we would match it to a location ID
-      // but the movement table schema expects string for fromLoc/toLoc.
+      const location = await prisma.location.findFirst({
+        where: { name: { contains: body.toLoc } }
+      });
+      if (location) {
+        await prisma.asset.update({
+          where: { id: body.assetId },
+          data: { locationId: location.id }
+        });
+      }
     }
     
     return NextResponse.json(movement, { status: 201 });

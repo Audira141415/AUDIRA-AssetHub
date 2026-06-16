@@ -111,3 +111,22 @@
   }
   /* Remove dark mode invert styles if any */
 }
+
+@keyframes scan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(100%); }
+  100% { transform: translateY(0); }
+}
+
+@utility animate-scan {
+  animation: scan 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes bounce-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(25%); }
+}
+
+@utility animate-bounce-x {
+  animation: bounce-x 1s infinite;
+}

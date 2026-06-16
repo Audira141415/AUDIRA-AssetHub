@@ -231,8 +231,15 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
     }
   }
 
-  const handleClone = () => {
-    console.warn("Clone not implemented via API yet")
+  const handleClone = async () => {
+    try {
+      if (asset?.id) {
+        const res = await apiClient.post(`/assets/${asset.id}/clone`, {});
+        router.push(`/assets/${res.data.tag}`);
+      }
+    } catch (err) {
+      console.error("Clone failed via API", err);
+    }
   }
 
   const handleMove = async () => {
@@ -677,6 +684,9 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             </Button>
             <Button variant="outline" onClick={() => window.print()} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs text-foreground hover:text-accent hidden sm:flex">
               <FileDown className="h-4 w-4 mr-2" /> Export
+            </Button>
+            <Button variant="outline" onClick={handleClone} className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs text-foreground hover:text-accent hidden sm:flex">
+              <CopyIcon className="h-4 w-4 mr-2" /> Clone
             </Button>
             <Button variant="default" className="h-10 px-4 rounded-xl shadow-neu-extruded border-neu font-bold text-xs bg-accent text-white hover:bg-accent-light" onClick={() => setActiveTab("QR Code")}>
               <QrCode className="h-4 w-4 mr-2" /> QR

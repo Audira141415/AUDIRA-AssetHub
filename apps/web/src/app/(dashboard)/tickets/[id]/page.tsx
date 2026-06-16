@@ -8,7 +8,7 @@ import Link from "next/link"
 import { 
   ChevronRight, ArrowLeft, Clock, Server, MapPin, 
   AlertCircle, CheckCircle2, User, Wrench, ShieldAlert,
-  MessageSquare, FileText, LifeBuoy
+  MessageSquare, FileText, LifeBuoy, Trash2
 } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 import { HeroSection } from "@/components/ui/hero-section"
@@ -54,6 +54,19 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
     } catch (err) {
       console.error("Failed to update status", err);
     } finally {
+      setIsUpdating(false);
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this ticket?")) return;
+    setIsUpdating(true);
+    try {
+      await apiClient.delete(`/tickets/${id}`);
+      router.push('/tickets');
+    } catch (err) {
+      console.error("Failed to delete", err);
+      alert("Failed to delete ticket.");
       setIsUpdating(false);
     }
   }
@@ -104,6 +117,9 @@ export default function TicketDetailPage({ params }: { params: Promise<{ id: str
           </span>
           
           <div className="flex gap-4 ml-auto">
+            <Button onClick={handleDelete} disabled={isUpdating} variant="ghost" className="h-10 w-10 p-0 rounded-xl shadow-neu-extruded bg-background text-red-500 hover:text-red-600 hover:bg-red-50">
+              <Trash2 className="w-5 h-5" />
+            </Button>
             {!isResolved && ticket.status === 'Open' && (
               <Button onClick={() => handleUpdateStatus('In Progress')} disabled={isUpdating} className="h-10 px-6 rounded-xl shadow-neu-extruded bg-yellow-500 text-white font-bold hover:bg-yellow-600">
                 Start Work

@@ -66,3 +66,65 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ error: "Failed to assign license" }, { status: 500 })
   }
 }
+
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params
+    const body = await request.json()
+    const { name, productKey, vendor, totalSeats, purchaseCost, purchaseDate, expiryDate } = body
+
+    const updatedLicense = await prisma.license.update({
+      where: { id },
+      data: {
+        name,
+        productKey,
+        vendor,
+        totalSeats: parseInt(totalSeats) || 1,
+        purchaseCost: purchaseCost ? parseFloat(purchaseCost) : null,
+        purchaseDate: purchaseDate ? new Date(purchaseDate) : null,
+        expiryDate: expiryDate ? new Date(expiryDate) : null
+      }
+    })
+
+    return NextResponse.json(updatedLicense)
+  } catch (error) {
+    console.error("Failed to update license:", error)
+    return NextResponse.json({ error: "Failed to update license" }, { status: 500 })
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params
+    const { searchParams } = new URL(request.url)
+    const assetId = searchParams.get('assetId')
+
+    if (assetId) {
+      // Revoke assignment
+      await prisma.assetLicense.delete({
+        where: {
+          assetId_licenseId: {
+            assetId,
+            licenseId: id
+          }
+        }
+      })
+      return NextResponse.json({ message: "License revoked from asset" })
+    }
+
+    // Otherwise, delete the entire license
+    // Prisma will throw an error if there are existing relations (seats assigned)
+    await prisma.license.delete({
+      where: { id }
+    })
+
+    return NextResponse.json({ message: "License deleted successfully" })
+  } catch (error: any) {
+    console.error("Failed to delete license:", error)
+    if (error.code === 'P2003') {
+      return NextResponse.json({ error: "Cannot delete license because it is currently assigned to one or more assets. Please revoke all assignments first." }, { status: 400 })
+    }
+    return NextResponse.json({ error: "Failed to delete license" }, { status: 500 })
+  }
+}
+
