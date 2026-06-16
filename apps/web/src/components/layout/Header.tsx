@@ -16,6 +16,7 @@ export function Header() {
   const [showNotifications, setShowNotifications] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
   const [isDark, setIsDark] = useState(false)
+  const [notifications, setNotifications] = useState<any[]>([])
   
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -28,6 +29,21 @@ export function Header() {
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await fetch('/api/notifications');
+        if (res.ok) {
+          const data = await res.json();
+          setNotifications(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications", err);
+      }
+    };
+    fetchNotifications();
   }, [])
 
   const handleLogout = async () => {
@@ -53,19 +69,24 @@ export function Header() {
   }
 
   return (
-    <header className="h-20 bg-background flex items-center justify-between px-8 z-10 m-4 rounded-[32px] shadow-neu-extruded border-neu">
+    <header className="h-20 bg-background flex items-center justify-between px-8 z-50 relative m-4 rounded-[32px] shadow-neu-extruded border-neu">
       <div className="flex items-center gap-6 flex-1">
         <Button variant="ghost" size="icon" className="md:hidden text-muted-foreground hover:text-accent shadow-neu-extruded border-neu">
           <Menu size={24} />
         </Button>
-        <div className="relative w-full max-w-md hidden md:block group">
+        <div className="relative w-full max-w-md hidden md:block group transition-all duration-300 focus-within:max-w-lg">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-accent transition-colors" />
           <Input 
             ref={searchInputRef}
             placeholder="Search assets, tags, serial numbers..." 
-            className="w-full pl-12 pr-12 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 focus:outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.currentTarget.value.trim() !== '') {
+                router.push(`/assets?q=${encodeURIComponent(e.currentTarget.value.trim())}`);
+              }
+            }}
+            className="w-full pl-12 pr-12 bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 focus:outline-none transition-shadow duration-300 focus:shadow-neu-inset"
           />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-100 group-focus-within:opacity-0 transition-opacity">
             <kbd className="hidden sm:inline-flex h-6 items-center justify-center rounded-lg bg-background shadow-neu-extruded border-neu px-2 font-display text-[10px] font-bold text-muted-foreground">
               ⌘
             </kbd>
@@ -87,27 +108,35 @@ export function Header() {
         <div className="relative">
           <Button onClick={() => { setShowNotifications(!showNotifications); setShowProfile(false); }} variant="ghost" size="icon" className={`text-muted-foreground hover:text-accent relative h-12 w-12 rounded-[16px] transition-all ${showNotifications ? 'shadow-neu-inset-deep' : 'shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small'}`}>
             <Bell size={20} />
-            <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-accent rounded-full shadow-neu-extruded"></span>
+            {notifications.length > 0 && (
+              <span className="absolute top-3 right-3 w-2.5 h-2.5 bg-accent rounded-full shadow-neu-extruded"></span>
+            )}
           </Button>
           
           {showNotifications && (
-            <div className="absolute right-0 top-full mt-4 w-80 bg-[#E4E9F2] rounded-[24px] shadow-neu-extruded border border-white/50 p-4 z-50">
-              <h4 className="font-bold text-foreground mb-4 pb-2 border-b border-[#A3B1C6]/30">Notifications (2)</h4>
+            <div className="absolute right-0 top-full mt-4 w-80 bg-[#E4E9F2] rounded-[24px] shadow-neu-extruded border border-white/50 p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <h4 className="font-bold text-foreground mb-4 pb-2 border-b border-[#A3B1C6]/30">Notifications ({notifications.length})</h4>
               <div className="flex flex-col gap-3">
-                <div className="flex gap-3 p-3 rounded-2xl hover:bg-[#A3B1C6]/10 cursor-pointer transition-colors">
-                  <div className="w-2 h-2 mt-1.5 rounded-full bg-red-500 shrink-0"></div>
-                  <div>
-                    <p className="text-sm font-bold text-foreground">Warranty Expiring</p>
-                    <p className="text-xs text-muted-foreground font-semibold mt-1">UPS-SYS-1 warranty expires in 14 days.</p>
-                  </div>
-                </div>
-                <div className="flex gap-3 p-3 rounded-2xl hover:bg-[#A3B1C6]/10 cursor-pointer transition-colors">
-                  <div className="w-2 h-2 mt-1.5 rounded-full bg-[#8B84FF] shrink-0"></div>
-                  <div>
-                    <p className="text-sm font-bold text-foreground">Scheduled Maintenance</p>
-                    <p className="text-xs text-muted-foreground font-semibold mt-1">CHIL-01 maintenance is due today at 14:00.</p>
-                  </div>
-                </div>
+                {notifications.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No new notifications</p>
+                ) : (
+                  notifications.map(notif => (
+                    <div 
+                      key={notif.id} 
+                      onClick={() => {
+                        setShowNotifications(false);
+                        if (notif.link) router.push(notif.link);
+                      }}
+                      className="flex gap-3 p-3 rounded-2xl hover:bg-[#A3B1C6]/10 cursor-pointer transition-colors"
+                    >
+                      <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${notif.type === 'critical' ? 'bg-red-500' : notif.type === 'warning' ? 'bg-amber-500' : 'bg-accent'}`}></div>
+                      <div>
+                        <p className="text-sm font-bold text-foreground">{notif.title}</p>
+                        <p className="text-xs text-muted-foreground font-semibold mt-1">{notif.message}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
@@ -129,7 +158,7 @@ export function Header() {
           </Button>
 
           {showProfile && (
-            <div className="absolute right-14 top-full mt-4 w-48 bg-[#E4E9F2] rounded-[24px] shadow-neu-extruded border border-white/50 p-2 z-50">
+            <div className="absolute right-14 top-full mt-4 w-48 bg-[#E4E9F2] rounded-[24px] shadow-neu-extruded border border-white/50 p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="flex flex-col gap-1">
                 <button className="text-left px-4 py-3 text-sm font-bold text-foreground hover:bg-[#A3B1C6]/20 rounded-xl transition-colors">My Profile</button>
                 <button className="text-left px-4 py-3 text-sm font-bold text-foreground hover:bg-[#A3B1C6]/20 rounded-xl transition-colors">Settings</button>

@@ -11,6 +11,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         name: body.name,
         type: body.type,
         parentLoc: body.parentLoc || null,
+        capacity: body.capacity ? parseInt(body.capacity) : null,
       }
     });
     

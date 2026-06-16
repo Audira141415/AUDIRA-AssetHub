@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useState } from"react"
-import { useRouter } from"next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import { useSession } from "next-auth/react"
 import { Sidebar } from "@/components/layout/Sidebar"
 import { Header } from "@/components/layout/Header"
+import { AiCopilot } from "@/components/ui/ai-copilot"
 
 export default function DashboardLayout({
   children,
@@ -37,6 +38,7 @@ export default function DashboardLayout({
           {children}
         </main>
       </div>
+      <AiCopilot />
     </div>
   )
 }

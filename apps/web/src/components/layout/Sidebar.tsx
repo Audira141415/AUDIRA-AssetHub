@@ -82,9 +82,9 @@ export function Sidebar() {
         <div>
           <Link
             href="/dashboard"
-            className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+            className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
               pathname === "/dashboard" || pathname.startsWith("/dashboard")
-                ? "bg-background shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 text-accent" 
+                ? "bg-accent/10 shadow-neu-inset-deep border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 text-accent" 
                 : "text-muted-foreground hover:shadow-neu-extruded hover:border-neu hover:text-foreground border border-transparent"
             }`}
           >
@@ -104,9 +104,9 @@ export function Sidebar() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 ${
+                    className={`flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
                       isActive 
-                        ? "bg-background shadow-neu-inset text-accent" 
+                        ? "bg-accent/10 shadow-neu-inset text-accent" 
                         : "text-muted-foreground hover:shadow-neu-extruded hover:text-foreground"
                     }`}
                   >
@@ -121,8 +121,8 @@ export function Sidebar() {
       </div>
 
       <div className="p-6 mt-auto">
-        <div className="bg-background shadow-neu-extruded rounded-2xl p-4 flex gap-4 items-start cursor-pointer hover:shadow-neu-inset-small transition-all duration-300">
-          <div className="p-2 bg-background shadow-neu-inset-small rounded-xl shrink-0">
+        <div className="bg-background shadow-neu-extruded rounded-2xl p-4 flex gap-4 items-start cursor-pointer hover:shadow-neu-inset-small hover:scale-[1.02] transition-all duration-300 group">
+          <div className="p-2 bg-background shadow-neu-inset-small rounded-xl shrink-0 group-hover:animate-pulse">
             <HelpCircle size={18} className="text-accent" />
           </div>
           <div>

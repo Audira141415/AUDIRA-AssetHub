@@ -174,7 +174,7 @@ export default function LicenseDetailPage({ params }: { params: Promise<{ id: st
                   <tbody className="text-foreground">
                     {license.assets && license.assets.length > 0 ? (
                       license.assets.map((al: any) => (
-                        <tr key={al.id} className="hover:bg-[#A3B1C6]/10 transition-colors">
+                        <tr key={al.id} onClick={() => router.push(`/assets/${al.asset.tag}`)} className="hover:bg-[#A3B1C6]/10 transition-colors cursor-pointer">
                           <td className="px-6 py-4 font-bold text-accent border-b border-white/60">
                             {al.asset.tag}
                           </td>
@@ -183,7 +183,7 @@ export default function LicenseDetailPage({ params }: { params: Promise<{ id: st
                             {new Date(al.assignedAt).toLocaleDateString()}
                           </td>
                           <td className="px-6 py-4 border-b border-white/60 text-right">
-                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-500/10">
+                            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={e => e.stopPropagation()}>
                               Revoke
                             </Button>
                           </td>

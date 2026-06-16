@@ -10,11 +10,13 @@ import {
 } from "lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 import { apiClient } from "@/lib/api-client"
+import { useRouter } from "next/navigation"
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [viewMode, setViewMode] = useState<"table" | "tree">("table")
+  const router = useRouter()
   
   // Drawer states
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -212,7 +214,7 @@ export default function CategoriesPage() {
               ) : (
                 filteredCategories.map((category) => {
                 return (
-                  <tr key={category.id} className="group hover:bg-[#A3B1C6]/10 transition-all duration-300 hover:shadow-[inset_4px_0_0_0_#6C63FF]">
+                  <tr key={category.id} onClick={() => router.push(`/categories/${category.id}`)} className="group hover:bg-[#A3B1C6]/10 transition-all duration-300 hover:shadow-[inset_4px_0_0_0_#6C63FF] cursor-pointer">
                     <td className="px-8 py-5">
                       <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-neu-inset text-accent">
                         <Layers className="w-5 h-5" />
@@ -227,7 +229,7 @@ export default function CategoriesPage() {
                     <td className="px-6 py-5 font-mono text-xs font-bold text-muted-foreground">{category.code}</td>
                     <td className="px-6 py-5 text-sm font-bold text-foreground">{category._count?.assets || 0}</td>
                     <td className="px-8 py-5 text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-2" onClick={e => e.stopPropagation()}>
                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg text-accent hover:text-accent hover:bg-accent/10" onClick={() => openEditDrawer(category)} title="Edit Category">
                           <Edit2 className="w-4 h-4" />
                         </Button>

@@ -2,17 +2,22 @@
 
 import { useState, useEffect, useMemo } from "react"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { 
   Search, ShieldCheck, Shield, Clock, XCircle, 
   CalendarDays, Box, AlertCircle
 } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 import { HeroSection } from "@/components/ui/hero-section"
+import { useRouter } from "next/navigation"
 
 export default function WarrantyPage() {
   const [warranties, setWarranties] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  const router = useRouter()
 
   useEffect(() => {
     const fetchWarranties = async () => {
@@ -76,6 +81,9 @@ export default function WarrantyPage() {
     });
   }, [warranties, searchQuery]);
 
+  const totalPages = Math.ceil(filteredWarranties.length / itemsPerPage);
+  const currentWarranties = filteredWarranties.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   // KPIs
   const totalWarranties = warranties.length;
   const activeCount = warranties.filter(w => w.status === "Active").length;
@@ -83,7 +91,7 @@ export default function WarrantyPage() {
   const expiredCount = warranties.filter(w => w.status === "Expired").length;
 
   return (
-    <div className="flex w-full gap-6 pb-6 h-full px-6">
+    <div className="flex w-full gap-6 pb-6 px-6">
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         
         <HeroSection
@@ -130,7 +138,10 @@ export default function WarrantyPage() {
               placeholder="Search by tag, name, or vendor..."
               className="w-full h-12 pl-11 pr-4 bg-background shadow-neu-inset border-neu rounded-2xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
             />
           </div>
         </div>
@@ -153,8 +164,8 @@ export default function WarrantyPage() {
                 ) : filteredWarranties.length === 0 ? (
                   <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No warranties found.</td></tr>
                 ) : (
-                  filteredWarranties.map((w) => (
-                    <tr key={w.id} className="hover:bg-[#A3B1C6]/10 transition-all">
+                  currentWarranties.map((w) => (
+                    <tr key={w.id} onClick={() => router.push(`/assets/${w.assetTag}`)} className="hover:bg-[#A3B1C6]/10 transition-all cursor-pointer">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0 shadow-neu-inset">
@@ -182,6 +193,36 @@ export default function WarrantyPage() {
               </tbody>
             </table>
           </div>
+          {filteredWarranties.length > itemsPerPage && (
+            <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:px-6 bg-background/50 border-t border-[#A3B1C6]/20 gap-4">
+              <span className="text-xs font-bold text-muted-foreground">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredWarranties.length)} of {filteredWarranties.length} entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="shadow-neu-extruded font-bold"
+                >
+                  Previous
+                </Button>
+                <div className="text-xs font-bold px-4 py-2 bg-background shadow-neu-inset rounded-lg">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="shadow-neu-extruded font-bold"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       </div>
     </div>

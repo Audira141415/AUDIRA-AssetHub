@@ -12,7 +12,7 @@ import {
   Monitor,
   Moon,
   Sun,
-  LayoutSidebar,
+  LayoutGrid,
   AlignJustify,
   Activity,
   UserCheck,
@@ -545,7 +545,7 @@ export default function SettingsPage() {
                     <p className="text-xs text-muted-foreground mt-1">Connect with external ITSM, discovery, and monitoring tools</p>
                   </div>
                   <Button className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs flex items-center gap-2">
-                    <LayoutSidebar size={16} /> Browse Plugin Store
+                    <LayoutGrid size={16} /> Browse Plugin Store
                   </Button>
                 </div>
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">

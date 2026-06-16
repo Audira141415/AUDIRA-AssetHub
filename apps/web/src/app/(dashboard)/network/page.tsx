@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/ui/hero-section"
 import { Button } from "@/components/ui/button"
 import { Plus, Network, Server, Globe, Search } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
+import { useRouter } from "next/navigation"
 
 export default function NetworkPage() {
   const [subnets, setSubnets] = useState<any[]>([])
@@ -15,6 +16,9 @@ export default function NetworkPage() {
   const [activeTab, setActiveTab] = useState("Subnets")
   const [isSubnetModalOpen, setIsSubnetModalOpen] = useState(false)
   const [isIpModalOpen, setIsIpModalOpen] = useState(false)
+  const [currentIpPage, setCurrentIpPage] = useState(1)
+  const itemsPerPage = 10
+  const router = useRouter()
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -38,8 +42,11 @@ export default function NetworkPage() {
     fetchData();
   }, [])
 
+  const totalIpPages = Math.ceil(ips.length / itemsPerPage);
+  const currentIps = ips.slice((currentIpPage - 1) * itemsPerPage, currentIpPage * itemsPerPage);
+
   return (
-    <div className="flex flex-col w-full gap-6 pb-6 h-full">
+    <div className="flex flex-col w-full gap-6 pb-6">
       <HeroSection
         title="Network & IPAM"
         description="Manage IP address allocations, subnets, and VLANs for your infrastructure."
@@ -68,7 +75,7 @@ export default function NetworkPage() {
         ))}
       </div>
 
-      <div className="flex-1 overflow-y-auto pr-2 pb-10">
+      <div className="flex-1 pr-2 pb-10">
         {isLoading ? (
           <div className="p-8 text-center font-bold text-muted-foreground">Loading Network Data...</div>
         ) : (
@@ -113,8 +120,8 @@ export default function NetworkPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#A3B1C6]/20">
-                    {ips.map(ip => (
-                      <tr key={ip.id} className="hover:bg-background hover:shadow-neu-inset-small transition-all">
+                    {currentIps.map(ip => (
+                      <tr key={ip.id} onClick={() => ip.asset && router.push(`/assets/${ip.asset.tag}`)} className="hover:bg-background hover:shadow-neu-inset-small transition-all cursor-pointer">
                         <td className="px-6 py-4 font-bold text-foreground">{ip.address}</td>
                         <td className="px-6 py-4 font-medium text-muted-foreground">{ip.subnet?.name || "-"}</td>
                         <td className="px-6 py-4">
@@ -135,6 +142,36 @@ export default function NetworkPage() {
                     )}
                   </tbody>
                 </table>
+                {ips.length > itemsPerPage && (
+                  <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:px-6 bg-background/50 border-t border-[#A3B1C6]/20 gap-4">
+                    <span className="text-xs font-bold text-muted-foreground">
+                      Showing {(currentIpPage - 1) * itemsPerPage + 1} to {Math.min(currentIpPage * itemsPerPage, ips.length)} of {ips.length} entries
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentIpPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentIpPage === 1}
+                        className="shadow-neu-extruded font-bold"
+                      >
+                        Previous
+                      </Button>
+                      <div className="text-xs font-bold px-4 py-2 bg-background shadow-neu-inset rounded-lg">
+                        Page {currentIpPage} of {totalIpPages}
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setCurrentIpPage(prev => Math.min(totalIpPages, prev + 1))}
+                        disabled={currentIpPage === totalIpPages}
+                        className="shadow-neu-extruded font-bold"
+                      >
+                        Next
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </>

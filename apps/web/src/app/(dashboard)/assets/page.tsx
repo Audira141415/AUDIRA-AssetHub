@@ -1,4 +1,5 @@
 "use client"
+import { useSearchParams } from "next/navigation"
 
 import { useState, useMemo, useEffect, useRef } from "react"
 import { Plus, Search, Filter, MoreHorizontal, Server, Activity, Wrench, ShieldAlert, ChevronRight, ArrowUpDown, ChevronDown, CheckCircle2, AlertCircle, WifiOff, Download, Upload, QrCode, Trash2, X } from "lucide-react"
@@ -235,6 +236,14 @@ export default function AllAssetsPage() {
   const [siteFilter, setSiteFilter] = useState("All")
   const [warrantyFilter, setWarrantyFilter] = useState("All")
 
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    // Read global search parameter from URL
+    const q = searchParams?.get('q');
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
+
   const categories = useMemo(() => {
     const cats = Array.from(new Set(assets.map(a => a.cat))).sort();
     const groups = [
@@ -329,7 +338,7 @@ export default function AllAssetsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
         {kpis.map((kpi, i) => (
-          <Card key={i} className="rounded-3xl hover:shadow-neu-inset hover:-translate-y-1 transition-all cursor-pointer">
+          <Card key={i} className="rounded-3xl shadow-neu-extruded hover:shadow-neu-inset hover:-translate-y-2 transition-all duration-300 cursor-pointer group border-neu">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
@@ -471,7 +480,7 @@ export default function AllAssetsPage() {
                 currentAssets.map((asset) => (
                   <tr 
                     key={asset.id} 
-                    className={`border-b border-white/20 transition-colors cursor-pointer ${selectedAssetIds.has(asset.id) ? 'bg-accent/5' : 'hover:bg-[#E4E9F2]/50'}`}
+                    className={`border-b border-white/20 transition-all duration-300 cursor-pointer group ${selectedAssetIds.has(asset.id) ? 'bg-accent/5' : 'hover:bg-[#A3B1C6]/10 hover:shadow-neu-inset-small'}`}
                     onClick={() => window.location.href = `/assets/${asset.tag}`}
                   >
                     <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
@@ -483,11 +492,11 @@ export default function AllAssetsPage() {
                       />
                     </td>
                     <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      <div className="font-bold text-accent hover:underline flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded border border-white/40 flex items-center justify-center shrink-0 overflow-hidden">
+                      <div className="font-bold text-accent group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-2">
+                        <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded border border-white/40 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-110 transition-transform duration-300">
                           <img src={getAssetImage(asset.cat)} alt={asset.cat} className="w-full h-full object-cover scale-[1.3]" />
                         </div>
-                        <span className="truncate">{asset.tag}</span>
+                        <span className="truncate group-hover:text-accent-light transition-colors">{asset.tag}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 font-semibold border-b border-white/60 whitespace-nowrap align-middle">{asset.host}</td>

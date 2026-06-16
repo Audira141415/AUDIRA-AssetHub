@@ -9,11 +9,15 @@ import {
 import { apiClient } from "@/lib/api-client"
 import { HeroSection } from "@/components/ui/hero-section"
 import { Card, CardContent } from "@/components/ui/card"
+import { useRouter } from "next/navigation"
 
 export default function MovementsPage() {
   const [movements, setMovements] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  const router = useRouter()
 
   const fetchMovements = async () => {
     try {
@@ -45,8 +49,11 @@ export default function MovementsPage() {
     });
   }, [movements, searchQuery]);
 
+  const totalPages = Math.ceil(filteredMovements.length / itemsPerPage);
+  const currentMovements = filteredMovements.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
-    <div className="flex w-full gap-6 pb-6 h-full px-6">
+    <div className="flex w-full gap-6 pb-6 px-6">
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         
         <HeroSection
@@ -72,7 +79,10 @@ export default function MovementsPage() {
               placeholder="Search movements, assets, users..."
               className="w-full h-12 pl-11 pr-4 bg-background shadow-neu-inset border-neu rounded-2xl text-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 placeholder:text-muted-foreground transition-all"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
             />
           </div>
         </div>
@@ -96,8 +106,8 @@ export default function MovementsPage() {
                 ) : filteredMovements.length === 0 ? (
                   <tr><td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">No movements found.</td></tr>
                 ) : (
-                  filteredMovements.map((movement) => (
-                    <tr key={movement.id} className="hover:bg-[#A3B1C6]/10 transition-all">
+                  currentMovements.map((movement) => (
+                    <tr key={movement.id} onClick={() => router.push(`/assets/${movement.asset?.tag}`)} className="hover:bg-[#A3B1C6]/10 transition-all cursor-pointer">
                       <td className="px-6 py-5">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center text-accent shrink-0 shadow-neu-inset">
@@ -134,6 +144,36 @@ export default function MovementsPage() {
               </tbody>
             </table>
           </div>
+          {filteredMovements.length > itemsPerPage && (
+            <div className="flex flex-col sm:flex-row items-center justify-between p-4 sm:px-6 bg-background/50 border-t border-[#A3B1C6]/20 gap-4">
+              <span className="text-xs font-bold text-muted-foreground">
+                Showing {(currentPage - 1) * itemsPerPage + 1} to {Math.min(currentPage * itemsPerPage, filteredMovements.length)} of {filteredMovements.length} entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="shadow-neu-extruded font-bold"
+                >
+                  Previous
+                </Button>
+                <div className="text-xs font-bold px-4 py-2 bg-background shadow-neu-inset rounded-lg">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="shadow-neu-extruded font-bold"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
       </div>
     </div>

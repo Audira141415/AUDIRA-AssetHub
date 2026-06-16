@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireAdmin } from '@/lib/rbac'
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -19,6 +20,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         category: true,
         vendor: true,
         location: true,
+        childAssets: true,
+        parentAsset: true,
       }
     });
 
@@ -47,7 +50,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const body = await request.json();
     const { 
-      tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, warranty,
+      tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, parentAssetId, warranty,
       lifecycleState, eolDate, eosDate, slaLevel, contractNumber,
       businessApp, businessOwner, techOwner, upstreamPowerId, upstreamNetId,
       costCenter, ownershipType, powerWatts, weightKg, coolingBTU 
@@ -56,7 +59,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const updatedAsset = await prisma.asset.update({
       where: whereClause as any,
       data: {
-        tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, warranty,
+        tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, parentAssetId, warranty,
         lifecycleState, eolDate, eosDate, slaLevel, contractNumber,
         businessApp, businessOwner, techOwner, upstreamPowerId, upstreamNetId,
         costCenter, ownershipType, powerWatts, weightKg, coolingBTU
@@ -77,6 +80,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const rbac = await requireAdmin();
+    if (!rbac.authorized) return rbac.response;
+
     const { id } = await params;
     const idOrTag = id;
     let whereClause = {};

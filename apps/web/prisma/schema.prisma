@@ -58,8 +58,9 @@ model Category {
 model Location {
   id        String   @id @default(cuid())
   name      String
-  type      String   // "Site", "Building", "Floor", "Room"
+  type      String   // "Site", "Building", "Floor", "Room", "Rack"
   parentLoc String?  // Optional parent ID
+  capacity  Int?     // Rack capacity in U
   assets    Asset[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -83,6 +84,10 @@ model Asset {
   warranty   String?
   rack       String?
   uPosition  String?
+  
+  parentAssetId String?
+  parentAsset   Asset?  @relation("SubrackHierarchy", fields: [parentAssetId], references: [id])
+  childAssets   Asset[] @relation("SubrackHierarchy")
   
   // Financial Fields
   purchaseCost    Float?

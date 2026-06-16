@@ -12,7 +12,7 @@ export default function ReportsPage() {
     // Fetch + Blob is safer for injecting Authorization headers.
     
     // Quick mock for now without auth header logic in browser download:
-    window.location.href = `http://localhost:3413/api/v1/reports/${endpoint}`
+    window.location.href = `/api/reports/${endpoint}`
   }
 
   return (

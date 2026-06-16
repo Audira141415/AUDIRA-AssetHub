@@ -11,6 +11,7 @@ export function getAssetImage(categoryName: string) {
   
   // IT Infrastructure
   if (cat.includes("server") || cat.includes("compute") || cat.includes("mainframe")) return "/images/assets/server.png"
+  if (cat.includes("chassis") || cat.includes("subrack") || cat.includes("enclosure")) return "/images/assets/chassis.png"
   if (cat.includes("switch") || cat.includes("network")) return "/images/assets/switch.png"
   if (cat.includes("router")) return "/images/assets/router.png"
   if (cat.includes("firewall") || cat.includes("security")) return "/images/assets/firewall.png"

@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-lg font-bold">Investment by Category</CardTitle>
           </CardHeader>
           <CardContent className="p-6 h-96">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <PieChart>
                 <Pie data={costByCategory} innerRadius={80} outerRadius={120} paddingAngle={2} dataKey="value" stroke="none">
                   {costByCategory.map((entry, index) => (
@@ -180,7 +180,7 @@ export default function AnalyticsPage() {
             <CardTitle className="text-lg font-bold">Projected Book Value (5 Years)</CardTitle>
           </CardHeader>
           <CardContent className="p-6 h-96">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
               <LineChart data={yearlyDepreciation} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#A3B1C6" opacity={0.3} />
                 <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontWeight: 600}} dy={10} />

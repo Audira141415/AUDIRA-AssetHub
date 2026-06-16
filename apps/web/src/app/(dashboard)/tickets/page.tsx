@@ -47,6 +47,14 @@ export default function TicketsPage() {
     }
   }
 
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredTickets = tickets.filter(t => 
+    t.title?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    t.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    t.asset?.tag?.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   return (
     <div className="space-y-8 pb-10">
       <HeroSection 
@@ -62,7 +70,9 @@ export default function TicketsPage() {
             <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input 
               type="text" 
-              placeholder="Search tickets by title or ID..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tickets by title, ID, or Asset tag..." 
               className="w-full h-12 bg-background shadow-neu-inset rounded-2xl pl-12 pr-4 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground"
             />
           </div>
@@ -81,10 +91,10 @@ export default function TicketsPage() {
             <div className="bg-background shadow-neu-inset rounded-3xl p-6">
               <h3 className="text-sm font-black text-muted-foreground uppercase tracking-wider mb-6 flex items-center justify-between">
                 <span>Open</span>
-                <span className="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{tickets.filter(t => t.status === 'Open').length}</span>
+                <span className="bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{filteredTickets.filter(t => t.status === 'Open').length}</span>
               </h3>
-              <div className="space-y-4">
-                {tickets.filter(t => t.status === 'Open').map(ticket => (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto [&::-webkit-scrollbar]:hidden pr-2">
+                {filteredTickets.filter(t => t.status === 'Open').map(ticket => (
                   <Card key={ticket.id} onClick={() => router.push(`/tickets/${ticket.id}`)} className="rounded-2xl border-none shadow-neu-extruded bg-background cursor-pointer hover:scale-[1.02] transition-transform">
                     <CardContent className="p-5">
                       <div className="flex justify-between items-start mb-2">
@@ -110,10 +120,10 @@ export default function TicketsPage() {
             <div className="bg-background shadow-neu-inset rounded-3xl p-6">
               <h3 className="text-sm font-black text-muted-foreground uppercase tracking-wider mb-6 flex items-center justify-between">
                 <span>In Progress</span>
-                <span className="bg-yellow-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{tickets.filter(t => t.status === 'In Progress').length}</span>
+                <span className="bg-yellow-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{filteredTickets.filter(t => t.status === 'In Progress').length}</span>
               </h3>
-              <div className="space-y-4">
-                {tickets.filter(t => t.status === 'In Progress').map(ticket => (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto [&::-webkit-scrollbar]:hidden pr-2">
+                {filteredTickets.filter(t => t.status === 'In Progress').map(ticket => (
                   <Card key={ticket.id} onClick={() => router.push(`/tickets/${ticket.id}`)} className="rounded-2xl border-none shadow-neu-extruded bg-background cursor-pointer hover:scale-[1.02] transition-transform">
                     <CardContent className="p-5">
                       <div className="flex justify-between items-start mb-2">
@@ -137,10 +147,10 @@ export default function TicketsPage() {
             <div className="bg-background shadow-neu-inset rounded-3xl p-6">
               <h3 className="text-sm font-black text-muted-foreground uppercase tracking-wider mb-6 flex items-center justify-between">
                 <span>Resolved</span>
-                <span className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{tickets.filter(t => t.status === 'Resolved').length}</span>
+                <span className="bg-green-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">{filteredTickets.filter(t => t.status === 'Resolved').length}</span>
               </h3>
-              <div className="space-y-4">
-                {tickets.filter(t => t.status === 'Resolved').map(ticket => (
+              <div className="space-y-4 max-h-[600px] overflow-y-auto [&::-webkit-scrollbar]:hidden pr-2">
+                {filteredTickets.filter(t => t.status === 'Resolved').map(ticket => (
                   <Card key={ticket.id} onClick={() => router.push(`/tickets/${ticket.id}`)} className="rounded-2xl border-none shadow-neu-extruded bg-background cursor-pointer hover:scale-[1.02] transition-transform opacity-75">
                     <CardContent className="p-5">
                       <div className="flex justify-between items-start mb-2">

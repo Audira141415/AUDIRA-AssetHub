@@ -21,19 +21,22 @@ export default function CreateAssetPage() {
   const [categories, setCategories] = useState<any[]>([])
   const [vendors, setVendors] = useState<any[]>([])
   const [locations, setLocations] = useState<any[]>([])
+  const [chassisList, setChassisList] = useState<any[]>([])
   const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [catsRes, vendsRes, locsRes] = await Promise.all([
+        const [catsRes, vendsRes, locsRes, assetsRes] = await Promise.all([
           apiClient.get('/categories'),
           apiClient.get('/vendors'),
-          apiClient.get('/locations')
+          apiClient.get('/locations'),
+          apiClient.get('/assets')
         ]);
         setCategories(catsRes.data);
         setVendors(vendsRes.data);
         setLocations(locsRes.data);
+        setChassisList(assetsRes.data.filter((a: any) => a.category?.name?.toLowerCase().includes('chassis') || a.model?.toLowerCase().includes('chassis')));
       } catch (err) {
         console.error("Failed to fetch references:", err);
       }
@@ -88,6 +91,7 @@ export default function CreateAssetPage() {
       locationId: formData.get("location_id") || locations[0]?.id || null,
       rack: formData.get("rack") || null,
       uPosition: formData.get("u_position") || null,
+      parentAssetId: formData.get("parent_asset_id") || null,
       warranty: formData.get("warranty_end") || null,
     };
 
@@ -322,14 +326,38 @@ export default function CreateAssetPage() {
                 <input type="text" placeholder="e.g. Server Room A" className="w-full h-14 px-5 bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground" />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Rack ID</label>
-                <input type="text" name="rack" defaultValue={asset?.rack || ""} placeholder="e.g. R01" className="w-full h-14 px-5 bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground" />
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Rack / Subrack Assignment</label>
+                <div className="relative">
+                  <select name="rack" defaultValue={asset?.rack || ""} className="w-full h-14 px-5 bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground appearance-none cursor-pointer">
+                    <option value="">Select Rack / Subrack</option>
+                    {locations.filter((loc: any) => loc.type === "Rack" || loc.type === "Subrack").map((rack: any) => (
+                      <option key={rack.id} value={rack.name}>{rack.name} ({rack.type})</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <div className="w-2 h-2 border-b-2 border-r-2 border-muted-foreground transform rotate-45"></div>
+                  </div>
+                </div>
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">U Position</label>
                 <div className="flex items-center gap-4">
                   <input type="text" name="u_position" defaultValue={asset?.uPosition || ""} placeholder="e.g. 24" className="w-32 h-14 px-5 bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground" />
                   <span className="text-sm font-bold text-muted-foreground">Select the starting Rack Unit (1-42)</span>
+                </div>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Parent Chassis / Subrack (If Applicable)</label>
+                <div className="relative">
+                  <select name="parent_asset_id" defaultValue={asset?.parentAssetId || ""} className="w-full h-14 px-5 bg-background shadow-neu-inset border-t border-l border-[#A3B1C6]/30 border-b border-r border-white/60 rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground appearance-none cursor-pointer">
+                    <option value="">-- No Parent (Direct to Rack) --</option>
+                    {chassisList.map((c: any) => (
+                      <option key={c.id} value={c.id}>{c.tag} - {c.model} (Rack: {c.rack || 'N/A'})</option>
+                    ))}
+                  </select>
+                  <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <div className="w-2 h-2 border-b-2 border-r-2 border-muted-foreground transform rotate-45"></div>
+                  </div>
                 </div>
               </div>
             </div>

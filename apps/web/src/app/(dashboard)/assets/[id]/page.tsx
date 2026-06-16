@@ -99,11 +99,15 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
           powerWatts: apiData.powerWatts || 0,
           weightKg: apiData.weightKg || 0,
           coolingBTU: apiData.coolingBTU || 0,
+          parentAsset: apiData.parentAsset ? `${apiData.parentAsset.tag} (${apiData.parentAsset.model})` : null,
+          childAssets: apiData.childAssets || [],
         };
 
         setAsset(mappedAsset);
         
-        if (mappedAsset.category === 'Rack') {
+        const catLower = (mappedAsset.category || "").toLowerCase();
+        
+        if (catLower.includes('rack')) {
           setSpecs({
             "Height": "42U",
             "Dimensions": "600mm x 1070mm x 2050mm",
@@ -112,12 +116,77 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             "Cooling Type": "Perforated Doors (80% Open)",
             "Color": "Black (RAL 9005)"
           });
+        } else if (catLower.includes('cctv') || catLower.includes('camera') || catLower.includes('nvr')) {
+          setSpecs({
+            "Resolution": "4K Ultra HD (8MP)",
+            "Lens": "2.8mm - 12mm Motorized Varifocal",
+            "Field of View": "105° - 32°",
+            "Night Vision": "IR up to 50m",
+            "Connectivity": "PoE (802.3af)",
+            "Storage": "Dual SD Card Slot"
+          });
+        } else if (catLower.includes('access') || catLower.includes('biometric') || catLower.includes('pac')) {
+          setSpecs({
+            "Authentication": "Facial Recognition, RFID, PIN",
+            "User Capacity": "10,000 Faces / 50,000 Cards",
+            "Log Capacity": "100,000 Events",
+            "Communication": "TCP/IP, Wiegand",
+            "Relay Output": "Lock Control, Alarm",
+            "Power": "12V DC, 3A"
+          });
+        } else if (catLower.includes('ups') || catLower.includes('battery')) {
+          setSpecs({
+            "Capacity": "20 kVA / 18 kW",
+            "Topology": "Online Double Conversion",
+            "Battery Type": "VRLA (Sealed Lead Acid)",
+            "Runtime (Half Load)": "15 Minutes",
+            "Input Voltage": "380/400/415V (3-Phase)",
+            "Efficiency": "Up to 96%"
+          });
+        } else if (catLower.includes('fire') || catLower.includes('fm200') || catLower.includes('fss')) {
+          setSpecs({
+            "Agent Type": "FM-200 (HFC-227ea)",
+            "Cylinder Capacity": "120 L",
+            "Fill Weight": "100 kg",
+            "Discharge Time": "10 Seconds",
+            "Operating Pressure": "25 bar at 21°C",
+            "Activation": "Automatic / Manual Pull Station"
+          });
+        } else if (catLower.includes('pac') || catLower.includes('ac ') || catLower.includes('cooling') || catLower.includes('chiller')) {
+          setSpecs({
+            "Cooling Capacity": "30 kW",
+            "Airflow Direction": "Downflow",
+            "Compressor Type": "Inverter Scroll",
+            "Refrigerant": "R410A",
+            "Fan Type": "EC Fans",
+            "Humidifier": "Electrode Boiler (8 kg/h)"
+          });
+        } else if (catLower.includes('switch') || catLower.includes('router') || catLower.includes('network')) {
+          setSpecs({
+            "Ports": "48x 10/100/1000BASE-T, 4x 10G SFP+",
+            "Switching Capacity": "176 Gbps",
+            "Forwarding Rate": "130.95 Mpps",
+            "PoE Budget": "740W (PoE+)",
+            "Layer": "Layer 3 Managed",
+            "Power Supply": "Dual Hot-Swappable 1100W"
+          });
+        } else if (catLower.includes('sensor') || catLower.includes('environmental')) {
+          setSpecs({
+            "Measurement": "Temperature & Humidity",
+            "Temp Range": "-20°C to +80°C (±0.5°C accuracy)",
+            "Humidity Range": "0% to 100% RH (±3% accuracy)",
+            "Connectivity": "Modbus TCP / SNMP",
+            "Power": "PoE or 24V DC",
+            "Display": "Local LCD Screen"
+          });
         } else {
           setSpecs({
-            "Memory": "N/A",
-            "CPU": "N/A",
-            "Storage": "N/A",
-            "Power": "N/A",
+            "Memory": "128 GB DDR4 ECC RAM",
+            "CPU": "Dual Intel Xeon Gold 6248R",
+            "Storage": "4x 1.92TB NVMe SSD (RAID 10)",
+            "Power Supply": "Dual 800W Redundant Platinum",
+            "NIC": "Quad-Port 10GbE SFP+",
+            "Form Factor": "2U Rackmount"
           });
         }
         
@@ -211,8 +280,36 @@ export default function EnterpriseAssetDetailPage({ params }: { params: Promise<
             <DataRow label="Criticality" value={<Badge text={asset.criticality} color="red" />} />
             <DataRow label="Department" value={asset.dept} />
             <DataRow label="Owner" value={asset.owner} />
+            {asset.parentAsset && <DataRow label="Parent Chassis" value={asset.parentAsset} bold textClass="text-accent" />}
           </CardContent>
         </Card>
+
+        {asset.childAssets?.length > 0 && (
+          <Card>
+            <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8 flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-bold text-foreground">Child Assets (Blades / Modules)</CardTitle>
+              <span className="px-3 py-1 bg-accent/10 text-accent text-xs font-bold rounded-lg uppercase tracking-wider">{asset.childAssets.length} Installed</span>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-[#A3B1C6]/20">
+                {asset.childAssets.map((child: any) => (
+                  <div key={child.id} className="p-6 flex items-center justify-between hover:bg-[#A3B1C6]/5 transition-colors cursor-pointer" onClick={() => router.push(`/assets/${child.tag}`)}>
+                    <div className="flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-background shadow-neu-extruded flex items-center justify-center shrink-0">
+                        <Server className="w-5 h-5 text-accent" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-foreground">{child.tag}</p>
+                        <p className="text-xs font-medium text-muted-foreground">{child.model || 'Unknown Model'} • {child.status}</p>
+                      </div>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <Card>
           <CardHeader className="pb-4 border-b border-[#A3B1C6]/20 px-8">

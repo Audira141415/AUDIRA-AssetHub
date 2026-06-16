@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { 
   ArrowLeft, Edit2, Copy, Trash2, CheckCircle2, Box, Layers, Server, 
   HardDrive, Network, Share2, Router, ShieldAlert, Zap, BatteryCharging, 
@@ -19,6 +20,7 @@ const iconMap: any = {
 
 export default function CategoryDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState("Overview")
 
   const [category, setCategory] = useState<any>(null)
@@ -223,7 +225,7 @@ export default function CategoryDetailPage({ params }: { params: Promise<{ id: s
                   </thead>
                   <tbody className="divide-y divide-[#A3B1C6]/10">
                     {relatedAssets.map((asset) => (
-                      <tr key={asset.id} className="hover:bg-[#A3B1C6]/5 transition-colors">
+                      <tr key={asset.id} onClick={() => router.push(`/assets/${asset.tag}`)} className="hover:bg-[#A3B1C6]/5 transition-colors cursor-pointer">
                         <td className="px-8 py-4 font-bold text-foreground">
                           <Link href={`/assets/${asset.tag}`} className="hover:text-accent transition-colors">{asset.tag}</Link>
                         </td>

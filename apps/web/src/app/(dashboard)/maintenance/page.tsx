@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { HeroSection } from "@/components/ui/hero-section"
 import { Button } from "@/components/ui/button"
 import { 
@@ -61,7 +61,7 @@ export default function MaintenancePage() {
   }
 
   return (
-    <div className="flex w-full gap-6 pb-6 h-full">
+    <div className="flex w-full gap-6 pb-6">
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         
         {/* Header */}
@@ -158,16 +158,16 @@ export default function MaintenancePage() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex-1 pr-2 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           
           {activeTab === "Helpdesk Tickets" && (
-            <div className="h-full min-h-[600px]">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+            <div className="min-h-[600px]">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
                 {columns.map(status => {
                   const colTickets = tickets.filter(t => t.status === status)
                   return (
-                    <div key={status} className="flex flex-col bg-[#A3B1C6]/5 rounded-[32px] border-2 border-dashed border-[#A3B1C6]/20 p-4 h-full">
+                    <div key={status} className="flex flex-col bg-[#A3B1C6]/5 rounded-[32px] border-2 border-dashed border-[#A3B1C6]/20 p-4">
                       <div className="flex items-center justify-between mb-4 px-2">
                         <div className="flex items-center gap-2">
                           <h3 className="font-bold text-foreground">{status}</h3>
@@ -178,7 +178,7 @@ export default function MaintenancePage() {
                         </Button>
                       </div>
 
-                      <div className="flex-1 space-y-4 overflow-y-auto [&::-webkit-scrollbar]:hidden pb-20">
+                      <div className="flex-1 space-y-4 max-h-[600px] overflow-y-auto [&::-webkit-scrollbar]:hidden pb-4">
                         {colTickets.map(ticket => (
                           <div key={ticket.id} className="bg-background shadow-neu-extruded border-neu rounded-2xl p-4 transition-all relative group">
                             <div className="flex justify-between items-start mb-3">

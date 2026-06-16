@@ -9,6 +9,7 @@ import {
   Search, Box, MapPin, ChevronDown
 } from "lucide-react"
 import QRCode from "react-qr-code"
+import { Html5QrcodeScanner } from "html5-qrcode"
 import { apiClient } from "@/lib/api-client"
 
 export default function AuditingPage() {
@@ -26,6 +27,7 @@ export default function AuditingPage() {
   const [scanInput, setScanInput] = useState("")
   const [scannedTags, setScannedTags] = useState<string[]>([])
   const [misplacedTags, setMisplacedTags] = useState<string[]>([])
+  const [isScannerActive, setIsScannerActive] = useState(false)
   
   const scanInputRef = useRef<HTMLInputElement>(null)
 
@@ -108,14 +110,50 @@ export default function AuditingPage() {
     setTimeout(() => scanInputRef.current?.focus(), 100)
   }
 
+  // HTML5 QR Code Scanner Setup
+  useEffect(() => {
+    if (activeTab === "Audit Mode" && isScannerActive) {
+      const scanner = new Html5QrcodeScanner(
+        "reader",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
+
+      scanner.render((decodedText) => {
+        // Automatically submit the scanned text
+        const tag = decodedText.trim().toUpperCase();
+        if (tag) {
+          const isExpected = expectedAssets.some(a => a.assetTag.toUpperCase() === tag)
+          if (isExpected) {
+            if (!scannedTags.includes(tag)) setScannedTags(prev => [...prev, tag])
+          } else {
+            const assetExists = assets.some(a => a.assetTag.toUpperCase() === tag)
+            if (assetExists && !misplacedTags.includes(tag)) setMisplacedTags(prev => [...prev, tag])
+            else if (!assetExists && !misplacedTags.includes(tag)) setMisplacedTags(prev => [...prev, `${tag} (Unknown)`])
+          }
+        }
+        scanner.clear();
+        setIsScannerActive(false);
+      }, (error) => {
+        // ignore errors (expected when no QR code in frame)
+      });
+
+      return () => {
+        scanner.clear().catch(e => console.error("Failed to clear scanner", e));
+      }
+    }
+  }, [activeTab, isScannerActive, expectedAssets, assets, scannedTags, misplacedTags]);
+
   useEffect(() => {
     if (activeTab === "Audit Mode") {
       handleResetAudit()
+    } else {
+      setIsScannerActive(false)
     }
   }, [auditLocation, activeTab])
 
   return (
-    <div className="flex w-full gap-6 pb-6 h-full px-6 print:bg-white print:p-0">
+    <div className="flex w-full gap-6 pb-6 px-6 print:bg-white print:p-0">
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           body * { visibility: hidden; }
@@ -152,7 +190,7 @@ export default function AuditingPage() {
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 pb-10 space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex-1 pr-2 pb-10 space-y-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           
           {activeTab === "Asset Labels" && (
             <div className="flex flex-col xl:flex-row gap-6 print:block">
@@ -269,7 +307,17 @@ export default function AuditingPage() {
                     </div>
 
                     <div className="pt-2">
-                      <label className="text-xs font-bold text-muted-foreground mb-2 block">Scanner Input</label>
+                      <div className="flex justify-between items-center mb-2">
+                        <label className="text-xs font-bold text-muted-foreground block">Scanner Input</label>
+                        <Button variant="ghost" size="sm" className="h-6 text-[10px] bg-accent/10 text-accent font-bold px-2 rounded-md hover:bg-accent hover:text-white" onClick={() => setIsScannerActive(!isScannerActive)}>
+                          {isScannerActive ? 'Stop Camera' : 'Use Camera'}
+                        </Button>
+                      </div>
+                      
+                      {isScannerActive && (
+                        <div id="reader" className="w-full overflow-hidden rounded-xl border border-accent/30 mb-4 bg-black/5"></div>
+                      )}
+
                       <form onSubmit={handleScanSubmit} className="relative">
                         <Scan className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-accent" />
                         <Input 
@@ -278,7 +326,7 @@ export default function AuditingPage() {
                           value={scanInput}
                           onChange={(e) => setScanInput(e.target.value)}
                           className="w-full h-12 pl-10 pr-4 bg-background shadow-neu-inset-deep border border-accent/50 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent text-foreground uppercase placeholder:normal-case" 
-                          autoFocus
+                          autoFocus={!isScannerActive}
                         />
                         <button type="submit" className="hidden">Submit</button>
                       </form>

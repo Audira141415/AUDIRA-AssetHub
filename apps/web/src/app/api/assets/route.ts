@@ -36,10 +36,28 @@ export async function GET(request: Request) {
   }
 }
 
+import { assetSchema } from '@/lib/validations/asset';
+import { rateLimit } from '@/lib/rate-limit';
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition } = body
+    // Rate Limiting (Layer 5) - Max 30 requests per minute per IP for this route
+    const rl = rateLimit(request, 30, 60000);
+    if (!rl.success) return rl.response;
+
+    const rawBody = await request.json();
+    
+    // Zod validation (Layer 4)
+    const validationResult = assetSchema.safeParse(rawBody);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: "Invalid data format", details: validationResult.error.format() },
+        { status: 400 }
+      );
+    }
+    
+    const body = validationResult.data;
+    const { tag, hostname, status, categoryId, vendorId, locationId, rack, uPosition, parentAssetId } = body;
     
     let finalTag = tag;
     
@@ -68,6 +86,7 @@ export async function POST(request: Request) {
         locationId,
         rack,
         uPosition,
+        parentAssetId,
       },
       include: {
         category: true,

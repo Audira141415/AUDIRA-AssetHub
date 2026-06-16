@@ -30,6 +30,7 @@ export async function POST(request: Request) {
         name: body.name,
         type: body.type,
         parentLoc: body.parentLoc || null,
+        capacity: body.capacity ? parseInt(body.capacity) : null,
       }
     });
     
