@@ -31,7 +31,7 @@ export function MoveAssetModal({ assetId, currentRackId, currentU }: { assetId: 
     queryFn: () => fetchApi("/locations/racks"),
   })
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<MoveFormValues>({
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<any>({
     resolver: zodResolver(moveSchema),
     defaultValues: {
       new_rack_id: currentRackId,
@@ -82,7 +82,7 @@ export function MoveAssetModal({ assetId, currentRackId, currentU }: { assetId: 
               <option value="Status Change">Status Change</option>
               <option value="Maintenance">Sent to Maintenance</option>
             </select>
-            {errors.action && <p className="text-sm text-red-500">{errors.action.message}</p>}
+            {errors.action?.message && <p className="text-sm text-red-500">{String(errors.action.message)}</p>}
           </div>
 
           <div className="space-y-2">

@@ -30,5 +30,15 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "prisma.config.ts",
+    "build_hierarchy.ts",
+    "check_assets.ts",
+    "check_locations.ts",
+    "fix_batteries.ts",
+    "fix_cctv.ts",
+    "remapping_script.ts",
+    "test_delete.ts"
+  ]
 }

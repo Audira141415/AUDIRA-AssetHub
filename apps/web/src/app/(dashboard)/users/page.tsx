@@ -13,7 +13,7 @@ import { useAuthStore } from "@/lib/store"
 
 export default function UsersPage() {
   const user = useAuthStore((state) => state.user)
-  const isSuperAdmin = user?.is_superuser || user?.role?.name === "Super Admin" || user?.role?.name === "Admin" || user?.role === "Super Admin" || user?.role === "Admin"
+  const isSuperAdmin = user?.is_superuser || user?.role?.name === "Super Admin" || user?.role?.name === "Admin" || (user?.role as any) === "Super Admin" || (user?.role as any) === "Admin"
 
   const [users, setUsers] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)

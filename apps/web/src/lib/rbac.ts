@@ -13,7 +13,8 @@ export async function requireAdmin() {
   }
 
   // Assuming role is available on session.user (configured in auth.ts callbacks)
-  if ((session.user as any).role !== "Admin") {
+  const role = (session.user as any).role;
+  if (role !== "Admin" && role !== "Super Admin") {
     return {
       authorized: false,
       response: NextResponse.json({ error: "Forbidden: Admin access required" }, { status: 403 })

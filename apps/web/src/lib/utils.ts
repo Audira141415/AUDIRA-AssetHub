@@ -35,17 +35,27 @@ export function getAssetImage(categoryName: string) {
   if (cat.includes("pac") || cat.includes("precision")) return "/images/assets/pac.png"
   if (cat.includes("crac") || cat.includes("crah")) return "/images/assets/pac.png"
   if (cat.includes("chiller")) return "/images/assets/chiller.png"
-  if (cat.includes("ac") || cat.includes("aircon") || cat.includes("cooling")) return "/images/assets/ac_standing.png"
+  if (cat.includes("split")) return "/images/assets/ac_wall.png"
+  if (cat.includes("ac") || cat.includes("aircon") || cat.includes("cooling") || cat.includes("standing")) return "/images/assets/ac_standing.png"
   if (cat.includes("humidifier")) return "/images/assets/humidifier.png"
 
   // Security & Physical
-  if (cat.includes("cctv") || cat.includes("camera") || cat.includes("nvr")) return "/images/assets/cctv.png"
+  if (cat.includes("nvr") || cat.includes("dvr")) return "/images/assets/nvr.png"
+  if (cat.includes("webcam")) return "/images/assets/webcam.png"
+  if (cat.includes("cctv") || cat.includes("camera")) return "/images/assets/cctv.png"
+  if (cat.includes("monitor") || cat.includes("display") || cat.includes("tv")) return "/images/assets/monitor.png"
+  if (cat.includes("key") || cat.includes("kunci")) return "/images/assets/keybox.png"
   if (cat.includes("access") || cat.includes("biometric") || cat.includes("door")) return "/images/assets/biometric.png"
   if (cat.includes("turnstile")) return "/images/assets/turnstile.png"
 
   // Fire Suppression
-  if (cat.includes("fire") || cat.includes("fm200") || cat.includes("cylinder")) return "/images/assets/fm200.png"
+  if (cat.includes("cylinder") || cat.includes("agent")) return "/images/assets/cylinder.png"
+  if (cat.includes("panel") && (cat.includes("fire") || cat.includes("fss"))) return "/images/assets/fss_panel.png"
+  if (cat.includes("nozzle")) return "/images/assets/nozzle.png"
+  if (cat.includes("evacuate") || cat.includes("sign")) return "/images/assets/evacuate_sign.png"
+  if (cat.includes("alarm") || cat.includes("push") || cat.includes("horn") || cat.includes("strobe") || cat.includes("abort")) return "/images/assets/alarm.png"
   if (cat.includes("detector") || cat.includes("vesda") || cat.includes("photoelectric")) return "/images/assets/vesda.png"
+  if (cat.includes("fire") || cat.includes("fm200")) return "/images/assets/fm200.png"
   
   // Environmental
   if (cat.includes("sensor") || cat.includes("environmental")) return "/images/assets/sensor.png"

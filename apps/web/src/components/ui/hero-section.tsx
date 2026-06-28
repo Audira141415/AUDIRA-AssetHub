@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 interface HeroSectionProps {
   title: string
   description?: string
+  subtitle?: string
   imageSrc?: string
   icon?: React.ReactNode
   className?: string
@@ -11,7 +12,8 @@ interface HeroSectionProps {
   compact?: boolean
 }
 
-export function HeroSection({ title, description, imageSrc, icon, className, children, compact = false }: HeroSectionProps) {
+export function HeroSection({ title, description, subtitle, imageSrc, icon, className, children, compact = false }: HeroSectionProps) {
+  const displayDesc = description || subtitle;
   return (
     <div className={cn(`shrink-0 relative w-full overflow-hidden rounded-3xl bg-[#E4E9F2] shadow-neu-extruded border border-white/60 group ${compact ? 'mb-4' : 'mb-8'}`, className)}>
       {/* Background Image overlay */}
@@ -34,9 +36,9 @@ export function HeroSection({ title, description, imageSrc, icon, className, chi
                 {title}
               </h1>
             </div>
-            {description && (
+            {displayDesc && (
               <p className={`${compact ? 'text-sm text-muted-foreground font-semibold pl-[64px]' : 'mt-4 text-lg text-muted-foreground font-semibold max-w-xl leading-relaxed'}`}>
-                {description}
+                {displayDesc}
               </p>
             )}
           </div>

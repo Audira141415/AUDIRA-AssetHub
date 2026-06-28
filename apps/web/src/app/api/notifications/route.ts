@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const notifications = [];
+    const notifications: any[] = [];
 
     // 1. Critical Tickets
     const criticalTickets = await prisma.ticket.findMany({

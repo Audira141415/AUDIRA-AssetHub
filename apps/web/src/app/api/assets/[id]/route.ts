@@ -8,10 +8,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const idOrTag = id;
     let whereClause = {};
 
-    if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {
-      whereClause = { id: parseInt(idOrTag, 10) };
-    } else {
+    if (idOrTag.startsWith('AST-') || idOrTag.includes('-')) {
       whereClause = { tag: idOrTag };
+    } else {
+      whereClause = { id: idOrTag };
     }
 
     const asset = await prisma.asset.findFirst({
@@ -42,10 +42,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const idOrTag = id;
     let whereClause = {};
 
-    if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {
-      whereClause = { id: parseInt(idOrTag, 10) };
-    } else {
+    if (idOrTag.startsWith('AST-') || idOrTag.includes('-')) {
       whereClause = { tag: idOrTag };
+    } else {
+      whereClause = { id: idOrTag };
     }
 
     const body = await request.json();
@@ -87,10 +87,10 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const idOrTag = id;
     let whereClause = {};
 
-    if (!isNaN(parseInt(idOrTag, 10)) && idOrTag.match(/^[0-9]+$/)) {
-      whereClause = { id: parseInt(idOrTag, 10) };
-    } else {
+    if (idOrTag.startsWith('AST-') || idOrTag.includes('-')) {
       whereClause = { tag: idOrTag };
+    } else {
+      whereClause = { id: idOrTag };
     }
 
     await prisma.asset.delete({

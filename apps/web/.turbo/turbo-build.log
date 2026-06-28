@@ -3,22 +3,93 @@
 > next build
 
 ▲ Next.js 16.2.9 (Turbopack)
+- Environments: .env
 
 ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
   Creating an optimized production build ...
-✓ Compiled successfully in 4.2s
+✓ Compiled successfully in 7.6s
   Running TypeScript ...
-Failed to type check.
+  Finished TypeScript in 7.8s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/50) ...
+  Generating static pages using 15 workers (12/50) 
+  Generating static pages using 15 workers (24/50) 
+  Generating static pages using 15 workers (37/50) 
+✓ Generating static pages using 15 workers (50/50) in 717ms
+  Finalizing page optimization ...
 
-./src/components/assets/MoveAssetModal.tsx:9:80
-Type error: Cannot find module '@/components/ui/dialog' or its corresponding type declarations.
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /ai
+├ ○ /analytics
+├ ƒ /api/ai/chat
+├ ƒ /api/assets
+├ ƒ /api/assets/[id]
+├ ƒ /api/assets/[id]/clone
+├ ƒ /api/assets/[id]/move
+├ ƒ /api/assets/[id]/movements
+├ ƒ /api/assets/import
+├ ƒ /api/auditing
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/categories
+├ ƒ /api/categories/[id]
+├ ƒ /api/dashboard/summary
+├ ƒ /api/licenses
+├ ƒ /api/licenses/[id]
+├ ƒ /api/locations
+├ ƒ /api/locations/[id]
+├ ƒ /api/locations/racks/[id]/visualization
+├ ƒ /api/logs
+├ ƒ /api/movements
+├ ƒ /api/network/ips
+├ ƒ /api/network/subnets
+├ ƒ /api/notifications
+├ ƒ /api/reports/assets/csv
+├ ƒ /api/reports/movements/csv
+├ ƒ /api/settings
+├ ƒ /api/tickets
+├ ƒ /api/tickets/[id]
+├ ƒ /api/users
+├ ƒ /api/users/[id]
+├ ƒ /api/vendors
+├ ƒ /api/vendors/[id]
+├ ƒ /api/warranties
+├ ○ /assets
+├ ƒ /assets/[id]
+├ ○ /assets/create
+├ ○ /auditing
+├ ○ /buildings
+├ ○ /categories
+├ ƒ /categories/[id]
+├ ○ /dashboard
+├ ○ /floors
+├ ○ /licenses
+├ ƒ /licenses/[id]
+├ ○ /locations
+├ ○ /login
+├ ○ /logs
+├ ○ /maintenance
+├ ○ /movements
+├ ○ /network
+├ ƒ /q/[asset_tag]
+├ ○ /racks
+├ ƒ /racks/[id]
+├ ○ /reports
+├ ○ /rooms
+├ ○ /scanner
+├ ○ /settings
+├ ○ /sites
+├ ○ /tickets
+├ ƒ /tickets/[id]
+├ ○ /users
+├ ○ /vendors
+├ ƒ /vendors/[id]
+└ ○ /warranty
 
-  [90m 7 |[0m ..., useQuery } [36mfrom[0m[32m"@tanstack/react-query"[0m
-  [90m 8 |[0m ...
-[31m[1m>[0m [90m 9 |[0m ...[33mogHeader[0m, [33mDialogTitle[0m, [33mDialogTrigger[0m } [36mfrom[0m[32m"@/components/ui/dialog"[0m
-  [90m   |[0m                                               [31m[1m^[0m
-  [90m10 |[0m ...[32mui/button"[0m
-  [90m11 |[0m ...[32mi/input"[0m
-  [90m12 |[0m ...[32mi/label"[0m
-Next.js build worker exited with code: 1 and signal: null
- ELIFECYCLE  Command failed with exit code 1.
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

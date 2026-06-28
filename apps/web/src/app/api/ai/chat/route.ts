@@ -140,7 +140,7 @@ export async function POST(request: Request) {
         if (asset.vendor) {
           responseText = `**${tag}** was supplied by **${asset.vendor.name}**.\nType: ${asset.vendor.type}\nPhone: ${asset.vendor.phone || 'N/A'}\nEmail: ${asset.vendor.email || 'N/A'}`;
         } else {
-          responseText = `**${tag}** is manufactured by ${asset.manufacturer || 'an unknown brand'} but doesn't have an active Vendor support profile linked in the database.`;
+          responseText = `**${tag}** doesn't have an active Vendor support profile linked in the database.`;
         }
         return NextResponse.json({ response: responseText }, { status: 200 });
       }

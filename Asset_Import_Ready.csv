@@ -1,0 +1,234 @@
+tag,hostname,category,location,rack,uPosition,status,purchaseCost,purchaseDate,salvageValue,usefulLifeYears
+AST-BTM-PAC-001,PAC 1,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2016-01-01,,10
+AST-BTM-PAC-002,PAC 2,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2016-01-01,,10
+AST-BTM-PAC-003,PAC 3,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2021-01-01,,10
+AST-BTM-PAC-004,PAC 4,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2023-01-01,,10
+AST-BTM-ACS-001,AC 1,AC Split,neuCentrIX Batam,AC Split MMR 1,-,Active,,2016-01-01,,10
+AST-BTM-ACS-002,AC 2,AC Split,neuCentrIX Batam,AC Split MMR 2,-,Active,,2016-01-01,,10
+AST-BTM-ACS-003,AC 3,AC Split,neuCentrIX Batam,AC Split MMR 3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-004,AC 4,AC Split,neuCentrIX Batam,AC Split PDU 1,-,Active,,2016-01-01,,10
+AST-BTM-ACS-005,AC 5,AC Split,neuCentrIX Batam,AC Split R. UPS 1,-,Active,,2016-01-01,,10
+AST-BTM-ACS-006,AC 6,AC Split,neuCentrIX Batam,AC Split R. UPS 2,-,Active,,2016-01-01,,10
+AST-BTM-ACS-007,AC 7,AC Split,neuCentrIX Batam,AC Split R. UPS 3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-008,AC 8,AC Split,neuCentrIX Batam,AC Split R. UPS 4,-,Active,,2016-01-01,,10
+AST-BTM-ACS-009,AC 9,AC Split,neuCentrIX Batam,AC Split R. UPS 5,-,Active,,2021-01-01,,10
+AST-BTM-ACS-010,AC 10,AC Split,neuCentrIX Batam,AC Split R. Battrey 1,-,Active,,2016-01-01,,10
+AST-BTM-ACS-011,AC 11,AC Split,neuCentrIX Batam,AC Split R. Battrey 2,-,Active,,2016-01-01,,10
+AST-BTM-ACS-012,AC 12,AC Split,neuCentrIX Batam,AC Split R. CCTV,-,Active,,2016-01-01,,10
+AST-BTM-ACS-013,AC 13,AC Split,neuCentrIX Batam,AC Split R. Panel Lt 1,-,Active,,2016-01-01,,10
+AST-BTM-ACS-014,AC 14,AC Split,neuCentrIX Batam,AC Split R. MMR Lt 2,-,Active,,2016-01-01,,10
+AST-BTM-UPS-001,UPS A,UPS,neuCentrIX Batam,Utility Room,-,Active,,,,10
+AST-BTM-UPS-002,UPS B,UPS,neuCentrIX Batam,Utility Room,-,Active,,,,10
+AST-BTM-UPS-003,Battery Bank A,UPS,neuCentrIX Batam,Utility Room,-,Active,,2025-01-01,,10
+AST-BTM-UPS-004,Battery Bank B,UPS,neuCentrIX Batam,Utility Room,-,Active,,,,10
+AST-BTM-FSS-001,Panel,Fire Suppression,neuCentrIX Batam,Koridor Staging Room,-,Active,,2016-01-01,,10
+AST-BTM-FSS-002,Phyroshield Agent Cylinder,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-003,Photoelectric Smoke Detector,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-004,Nozzle,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-005,Manual Push Station,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-006,Abort,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-007,Multitone Horn Strobe,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-FSS-008,Evacuate Sign,Fire Suppression,neuCentrIX Batam,"MMR , Utility & IT Hall",-,Active,,2016-01-01,,10
+AST-BTM-ACS-015,Finger Print,AC Split,neuCentrIX Batam,All Room,-,Active,,2016-01-01,,10
+AST-BTM-ACS-016,Magnetic,AC Split,neuCentrIX Batam,All Room,-,Active,,2016-01-01,,10
+AST-BTM-ACS-017,Push Button,AC Split,neuCentrIX Batam,All Room,-,Active,,2016-01-01,,10
+AST-BTM-ACS-018,Emergency Door Release,AC Split,neuCentrIX Batam,All Room,-,Active,,2016-01-01,,10
+AST-BTM-CCTV-001,NVR,CCTV Camera,neuCentrIX Batam,Meet Me Room,-,Active,,2016-01-01,,10
+AST-BTM-CCTV-002,Camera,CCTV Camera,neuCentrIX Batam,All Room,-,Active,,2016-01-01,,10
+AST-BTM-CCTV-003,TV,CCTV Camera,neuCentrIX Batam,NOC,-,Active,,2016-01-01,,10
+AST-BTM-CCTV-004,TV,CCTV Camera,neuCentrIX Batam,NOC,-,Active,,2022-01-01,,10
+AST-BTM-NET-001,Core Switch,Network,neuCentrIX Batam,Meet Me Room,-,Active,,2016-01-01,,10
+AST-BTM-NET-002,Switch,Network,neuCentrIX Batam,IT HALL,-,Active,,2016-01-01,,10
+AST-BTM-ACS-019,Rak Server 42 U,AC Split,neuCentrIX Batam,Meet Me Room,-,Active,,,,10
+AST-BTM-ACS-020,Rak Server 42 U,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,,,10
+AST-BTM-ACS-021,N-BTM-L3-01-001,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-022,N-BTM-L3-01-002,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-023,N-BTM-L3-01-003,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-024,N-BTM-L3-01-004,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-025,N-BTM-L3-01-005,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-026,N-BTM-L3-01-006,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-027,N-BTM-L3-01-007,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-028,N-BTM-L3-01-008,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-029,N-BTM-L3-01-009,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-030,N-BTM-L3-01-010,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-031,N-BTM-L3-02-001,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-032,N-BTM-L3-02-002,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-033,N-BTM-L3-02-003,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-034,N-BTM-L3-02-004,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-035,N-BTM-L3-02-005,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-036,N-BTM-L3-02-006,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-037,N-BTM-L3-02-007,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-038,N-BTM-L3-02-008,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-039,N-BTM-L3-02-009,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-040,N-BTM-L3-02-010,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-041,N-BTM-L3-03-001,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-042,N-BTM-L3-03-002,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-043,N-BTM-L3-03-003,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-044,N-BTM-L3-03-004,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-045,N-BTM-L3-03-005,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-046,N-BTM-L3-03-006,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-047,N-BTM-L3-03-007,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-048,N-BTM-L3-03-008,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-049,N-BTM-L3-03-009,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-050,N-BTM-L3-03-010,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-051,N-BTM-L3-04-001,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-052,N-BTM-L3-04-002,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-053,N-BTM-L3-04-003,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-054,N-BTM-L3-04-004,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-055,N-BTM-L3-04-005,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-056,N-BTM-L3-04-006,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-057,N-BTM-L3-04-007,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-058,N-BTM-L3-04-008,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-059,N-BTM-L3-04-009,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-060,N-BTM-L3-04-010,AC Split,neuCentrIX Batam,IT Hall Lt.3,-,Active,,2016-01-01,,10
+AST-BTM-ACS-061,Rak Server 42 U,AC Split,neuCentrIX Batam,Meet Me Room Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-062,Rak Server 42 U,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-063,N-BTM-L4-01-001,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-064,N-BTM-L4-01-002,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-065,N-BTM-L4-01-003,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-066,N-BTM-L4-01-004,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-067,N-BTM-L4-01-005,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-068,N-BTM-L4-01-006,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-069,N-BTM-L4-01-007,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-070,N-BTM-L4-01-008,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-071,N-BTM-L4-01-009,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-072,N-BTM-L4-01-010,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-073,N-BTM-L4-02-011,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-074,N-BTM-L4-02-012,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-075,N-BTM-L4-02-013,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-076,N-BTM-L4-02-014,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-077,N-BTM-L4-02-015,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-078,N-BTM-L4-02-016,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-079,N-BTM-L4-02-017,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-080,N-BTM-L4-02-018,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-081,N-BTM-L4-02-019,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-082,N-BTM-L4-02-020,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-083,N-BTM-L4-03-021,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-084,N-BTM-L4-03-022,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-085,N-BTM-L4-03-023,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-086,N-BTM-L4-03-024,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-087,N-BTM-L4-03-025,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-088,N-BTM-L4-03-026,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-089,N-BTM-L4-03-027,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-090,N-BTM-L4-03-028,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-091,N-BTM-L4-03-029,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-092,N-BTM-L4-03-030,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-093,N-BTM-L4-04-031,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-094,N-BTM-L4-04-032,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-095,N-BTM-L4-04-033,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-096,N-BTM-L4-04-034,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-097,N-BTM-L4-04-035,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-098,N-BTM-L4-04-036,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-099,N-BTM-L4-04-037,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-100,N-BTM-L4-04-038,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-101,N-BTM-L4-04-039,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-102,N-BTM-L4-04-040,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-103,N-BTM-L4-05-071,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-104,N-BTM-L4-05-072,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-105,N-BTM-L4-05-073,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-106,N-BTM-L4-05-074,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-107,N-BTM-L4-05-075,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-108,N-BTM-L4-05-076,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-109,N-BTM-L4-05-077,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-110,N-BTM-L4-05-078,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-111,N-BTM-L4-05-079,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-112,N-BTM-L4-05-080,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-113,N-BTM-L4-06-061,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-114,N-BTM-L4-06-062,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-115,N-BTM-L4-06-063,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-116,N-BTM-L4-06-064,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-117,N-BTM-L4-06-065,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-118,N-BTM-L4-06-066,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-119,N-BTM-L4-06-067,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-120,N-BTM-L4-06-068,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-121,N-BTM-L4-06-069,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-122,N-BTM-L4-06-070,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-123,N-BTM-L4-07-051,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-124,N-BTM-L4-07-052,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-125,N-BTM-L4-07-053,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-126,N-BTM-L4-07-054,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-127,N-BTM-L4-07-055,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-128,N-BTM-L4-07-056,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-129,N-BTM-L4-07-057,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-130,N-BTM-L4-07-058,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-131,N-BTM-L4-07-059,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-132,N-BTM-L4-07-060,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-133,N-BTM-L4-08-041,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-134,N-BTM-L4-08-042,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-135,N-BTM-L4-08-043,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-136,N-BTM-L4-08-044,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-137,N-BTM-L4-08-045,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-138,N-BTM-L4-08-046,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-139,N-BTM-L4-08-047,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-140,N-BTM-L4-08-048,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-141,N-BTM-L4-08-049,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-142,N-BTM-L4-08-050,AC Split,neuCentrIX Batam,IT Hall Lt.4,-,Active,,2023-01-01,,10
+AST-BTM-PAN-001,Panel Junction,Panel,neuCentrIX Batam,Genset,-,Active,,2016-01-01,,10
+AST-BTM-PAN-002,Panel MDP,Panel,neuCentrIX Batam,Utility Room,-,Active,,2016-01-01,,10
+AST-BTM-PAN-003,Panel UPS,Panel,neuCentrIX Batam,Utility Room,-,Active,,2016-01-01,,10
+AST-BTM-PAN-004,Panel PAC,Panel,neuCentrIX Batam,Utility Room,-,Active,,2016-01-01,,10
+AST-BTM-PAN-005,Panel Battery,Panel,neuCentrIX Batam,Utility Room,-,Active,,2016-01-01,,10
+AST-BTM-PAN-006,Panel PDU,Panel,neuCentrIX Batam,IT Hall,-,Active,,,,10
+AST-BTM-PAN-007,Panel Penerangan,Panel,neuCentrIX Batam,Koridor Staging Room,-,Active,,2016-01-01,,10
+AST-BTM-PC-001,PC,PC Vam,neuCentrIX Batam,Lobby,-,Active,,2022-01-01,,10
+AST-BTM-PC-002,Webcam,PC Vam,neuCentrIX Batam,Lobby,-,Active,,2022-01-01,,10
+AST-BTM-KEY-001,Box Kunci,Key Box,neuCentrIX Batam,NOC Room,-,Active,,2022-01-01,,10
+AST-BTM-EMX-001,CONTROLLER RARITANS,EMX,neuCentrIX Batam,IT HALL,-,Active,,2022-01-01,,10
+AST-BTM-EMX-002,TEMP& HUM SENSOR,EMX,neuCentrIX Batam,"IT Hall,UPS, MMR, PAC, NER, & Battery Room",-,Active,,2022-01-01,,10
+AST-BTM-EMX-003,7M ROPE WATER LEAKAGE,EMX,neuCentrIX Batam,"IT Hall,UPS, MMR, PAC, NER, & Battery Room",-,Active,,2022-01-01,,10
+AST-BTM-EMX-004,DUAL CONTAC CLOSURE,EMX,neuCentrIX Batam,"IT Hall,UPS, MMR, PAC, NER, & Battery Room",-,Active,,2022-01-01,,10
+AST-BTM-CCTV-005,NVR 1 32 Chanel,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-006,NVR 2 32 Chanel,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-007,SWITCH 1,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-008,SWITCH 2,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-009,SWITCH 3,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-010,MONITOR PC,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-011,"TV SHARP 60""",CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-012,"TV SHARP 60""",CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-013,PC CLIENT,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-014,UPS,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-015,NVR 1 16 Chanel,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-016,NVR 2 16 Chanel,CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-017,"TV SHARP 60""",CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-CCTV-018,"TV SHARP 60""",CCTV Camera,neuCentrIX Batam,R. NOC,-,Active,,2022-01-01,,10
+AST-BTM-PAC-005,PAC 1,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2022-01-01,,10
+AST-BTM-PAC-006,PAC 2,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2022-01-01,,10
+AST-BTM-PAC-007,PAC 3,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2022-01-01,,10
+AST-BTM-PAC-008,PAC 4,Cooling PAC,neuCentrIX Batam,IT Hall,-,Active,,2022-01-01,,10
+AST-BTM-ACS-143,AC Standing 1,AC Split,neuCentrIX Batam,Utility 1,-,Active,,2023-01-01,,10
+AST-BTM-ACS-144,AC Standing 2,AC Split,neuCentrIX Batam,Utility 1,-,Active,,2023-01-01,,10
+AST-BTM-ACS-145,AC Standing 3,AC Split,neuCentrIX Batam,Batrrey 2,-,Active,,2023-01-01,,10
+AST-BTM-ACS-146,AC Standing 4,AC Split,neuCentrIX Batam,Batrrey 2,-,Active,,2023-01-01,,10
+AST-BTM-ACS-147,AC Standing 5,AC Split,neuCentrIX Batam,Koridor lt4,-,Active,,2023-01-01,,10
+AST-BTM-ACS-148,AC Standing 6,AC Split,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-ACS-149,AC Standing 7,AC Split,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-ACS-150,AC Split 1,AC Split,neuCentrIX Batam,AC Split Utility 1,-,Active,,2023-01-01,,10
+AST-BTM-ACS-151,AC Split 2,AC Split,neuCentrIX Batam,AC Split Utility 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-003,Spine-1,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-004,Spine-2,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-005,Leaf-1,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-006,Leaf-2,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-007,Leaf-3,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-008,Leaf-4,NETWORK Lantai 3,neuCentrIX Batam,MMR,-,Active,,2023-01-01,,10
+AST-BTM-NET-009,Spine-1,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-010,Spine-2,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-011,Leaf-1,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-012,Leaf-2,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-013,Leaf-3,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-014,Leaf-4,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-015,Leaf-5,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-016,Leaf-6,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-017,Leaf-7,NETWORK Lantai 4,neuCentrIX Batam,MMR 1,-,Active,,2023-01-01,,10
+AST-BTM-NET-018,Leaf-8,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-019,Leaf-9,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-020,Leaf-10,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-021,Leaf-11,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-022,Leaf-12,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-023,Leaf-13,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-024,Leaf-14,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-025,Leaf-15,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-NET-026,Leaf-16,NETWORK Lantai 4,neuCentrIX Batam,MMR 2,-,Active,,2023-01-01,,10
+AST-BTM-UPS-005,UPS A,UPS,neuCentrIX Batam,Utility Room,-,Active,,2023-01-01,,10
+AST-BTM-UPS-006,UPS B,UPS,neuCentrIX Batam,Utility Room,-,Active,,2023-01-01,,10
+AST-BTM-UPS-007,Battery Bank A,UPS,neuCentrIX Batam,R. Battrey 2,-,Active,,2023-01-01,,10
+AST-BTM-UPS-008,Battery Bank B,UPS,neuCentrIX Batam,R. Battrey 2,-,Active,,2023-01-01,,10

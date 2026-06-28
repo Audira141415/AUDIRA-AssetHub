@@ -30,7 +30,6 @@ export async function POST(request: Request) {
         address,
         subnetId,
         assetId: assetId || null,
-        notes,
         status: status || 'Reserved'
       },
       include: {

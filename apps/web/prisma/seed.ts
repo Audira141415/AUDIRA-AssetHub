@@ -66,7 +66,7 @@ async function main() {
     { code: 'CAT-PDU', name: 'PDU', description: 'Power Distribution Unit' },
   ]
 
-  const categoryMap = {}
+  const categoryMap: Record<string, string> = {}
   for (const c of categoriesToCreate) {
     let cat = await prisma.category.findFirst({ where: { code: c.code } })
     if (!cat) cat = await prisma.category.create({ data: c })

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
@@ -172,7 +172,6 @@ export default function SettingsPage() {
                   <div>
                     <h2 className="text-xl font-bold text-foreground">General Settings</h2>
                     <p className="text-xs text-muted-foreground mt-1">Configure general preferences for the system</p>
-                  </div>
                   </div>
                   <Button disabled={isSaving} onClick={() => saveGenericSettings("General", { timeFormat, measurementUnit, themePreference, sidebarMode, tableDensity, thumbnails: toggles.thumbnails, serialNumbers: toggles.serialNumbers, gridView: toggles.gridView })} className="bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small rounded-2xl h-10 px-6 transition-all font-bold border-none text-xs">
                     {isSaving ? "Saving..." : "Save Changes"}

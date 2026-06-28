@@ -3,9 +3,10 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  props: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await props.params;
     const rackName = decodeURIComponent(params.id);
 
     // Get the rack location to determine capacity
@@ -14,7 +15,6 @@ export async function GET(
     });
     const height_u = location?.capacity || 42;
 
-    // Get all assets in this rack
     const assets = await prisma.asset.findMany({
       where: {
         rack: rackName,
@@ -23,8 +23,10 @@ export async function GET(
       select: {
         id: true,
         tag: true,
-        manufacturer: true,
-        model: true,
+        vendor: {
+          select: { name: true }
+        },
+        hostname: true,
         status: true,
         uPosition: true,
         _count: {
@@ -37,8 +39,8 @@ export async function GET(
     const formattedAssets = assets.map(a => ({
       id: a.id,
       asset_tag: a.tag,
-      manufacturer: a.manufacturer || 'Unknown',
-      model: a.model || 'Unknown',
+      manufacturer: a.vendor?.name || 'Unknown',
+      model: a.hostname || 'Unknown',
       status: a.status,
       u_position: a.uPosition ? parseInt(a.uPosition) : null,
       is_chassis: a._count.childAssets > 0,

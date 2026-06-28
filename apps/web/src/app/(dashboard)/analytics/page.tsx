@@ -169,7 +169,7 @@ export default function AnalyticsPage() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <RechartsTooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{backgroundColor: '#E0E5EC', border: 'none', borderRadius: '16px', boxShadow: '9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgba(255 255 255 / 0.5)'}} />
+                <RechartsTooltip formatter={(value: any) => formatCurrency(Number(value || 0))} contentStyle={{backgroundColor: '#E0E5EC', border: 'none', borderRadius: '16px', boxShadow: '9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgba(255 255 255 / 0.5)'}} />
               </PieChart>
             </ResponsiveContainer>
           </CardContent>
@@ -185,7 +185,7 @@ export default function AnalyticsPage() {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#A3B1C6" opacity={0.3} />
                 <XAxis dataKey="year" axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontWeight: 600}} dy={10} />
                 <YAxis tickFormatter={(val) => `$${val/1000}k`} axisLine={false} tickLine={false} tick={{fill: '#6B7280', fontWeight: 600}} />
-                <RechartsTooltip formatter={(value: number) => formatCurrency(value)} contentStyle={{backgroundColor: '#E0E5EC', border: 'none', borderRadius: '16px', boxShadow: '9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgba(255 255 255 / 0.5)'}} />
+                <RechartsTooltip formatter={(value: any) => formatCurrency(Number(value || 0))} contentStyle={{backgroundColor: '#E0E5EC', border: 'none', borderRadius: '16px', boxShadow: '9px 9px 16px rgb(163 177 198 / 0.6), -9px -9px 16px rgba(255 255 255 / 0.5)'}} />
                 <Line type="monotone" dataKey="value" stroke="#38B2AC" strokeWidth={4} dot={{ r: 6, fill: '#38B2AC', strokeWidth: 0 }} activeDot={{ r: 8 }} />
               </LineChart>
             </ResponsiveContainer>

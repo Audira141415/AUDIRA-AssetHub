@@ -302,8 +302,6 @@ export default function AllAssetsPage() {
 
   return (
     <div className="space-y-8 pb-10">
-      <BulkImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={fetchAssets} />
-      <QRCodeModal isOpen={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} assets={Array.from(selectedAssetIds).map(id => assets.find(a => a.id === id))} />
       
       {/* Header */}
       <HeroSection
@@ -599,7 +597,7 @@ export default function AllAssetsPage() {
       </Card>
 
       {/* Modals */}
-      <BulkImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onImportSuccess={fetchAssets} />
+      <BulkImportModal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} onSuccess={fetchAssets} />
       <QRCodeModal isOpen={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} assets={Array.from(selectedAssetIds).map(id => assets.find(a => a.id === id)).filter(Boolean)} />
       
     </div>
