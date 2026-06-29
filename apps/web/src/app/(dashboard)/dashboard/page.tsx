@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Package, Activity, ShieldAlert, MapPin, Calendar, ArrowRightLeft, Server, HardDrive, Database, ScanLine, MoreVertical, Download, WifiOff } from "lucide-react"
+import { Package, Activity, ShieldAlert, MapPin, Calendar, ArrowRightLeft, Server, HardDrive, Database, ScanLine, MoreVertical, Download, WifiOff, Clock, AlertTriangle, User } from "lucide-react"
 import { apiClient } from "@/lib/api-client"
 import { HeroSection } from "@/components/ui/hero-section"
 import {
@@ -26,6 +26,24 @@ export default function DashboardPage() {
   const [apiSummary, setApiSummary] = useState<any>(null)
   const [isOffline, setIsOffline] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+
+  // Mock data for new widgets
+  const criticalAlerts = [
+    { id: "ca1", device: "srv-db-01 (AST-SRV-001)", type: "Temperature", message: "Intake temperature is abnormally high (78°C). Fan speed failed to scale automatically.", severity: "Critical", time: "5 mins ago" },
+    { id: "ca2", device: "ups-main-01 (AST-UPS-001)", type: "Battery", message: "UPS battery bank cell #12 reports voltage variance outside normal limits.", severity: "Warning", time: "18 mins ago" }
+  ]
+
+  const expiringSlas = [
+    { id: "es1", tag: "AST-NET-001", hostname: "core-sw-01", type: "Core Switch", provider: "Cisco SmartNet 24x7x4", daysLeft: 12 },
+    { id: "es2", tag: "AST-SRV-002", hostname: "srv-app-01", type: "App Server", provider: "Dell ProSupport Plus NBD", daysLeft: 25 },
+    { id: "es3", tag: "AST-PAC-001", hostname: "pac-room1-01", type: "Precision Cooling", provider: "Vertiv Premium Care SLA", daysLeft: 29 }
+  ]
+
+  const auditLogs = [
+    { id: "al1", user: "Agus Dwi R", action: "Changed Status", target: "AST-UPS-001", detail: "Active -> Maintenance", time: "10 mins ago" },
+    { id: "al2", user: "Deni", action: "Moved Asset", target: "AST-SRV-003", detail: "Warehouse -> Rack A2 - U1", time: "45 mins ago" },
+    { id: "al3", user: "Budi", action: "Updated Subnet", target: "10.120.45.0/24", detail: "Assigned srv-app-02 IP reservation", time: "2 hours ago" }
+  ]
 
   useEffect(() => {
     setIsMounted(true)
@@ -322,6 +340,92 @@ export default function DashboardPage() {
             </Card>
 
           </div>
+        </div>
+
+        {/* Operations & System Logs Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+          {/* Column 1: Critical Alerts Feed */}
+          <Card className="rounded-[32px] border-neu shadow-neu-extruded bg-background">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-red-500 animate-pulse" /> Critical Alerts
+              </CardTitle>
+              <CardDescription className="text-xs font-bold text-muted-foreground">
+                Active hardware & cooling anomalies
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 pt-4">
+              {criticalAlerts.map((alert) => (
+                <div key={alert.id} className="p-4 rounded-2xl bg-[#E0E5EC] shadow-neu-inset border border-white/40 text-xs space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-bold text-foreground truncate max-w-[150px]">{alert.device}</span>
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-red-500/10 text-red-500 uppercase tracking-wider">{alert.severity}</span>
+                  </div>
+                  <p className="text-muted-foreground font-semibold leading-relaxed">{alert.message}</p>
+                  <div className="flex justify-between items-center pt-1 border-t border-[#A3B1C6]/20">
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-1"><Clock size={10} /> {alert.time}</span>
+                    <Button size="xs" variant="ghost" className="h-7 px-3 rounded-lg bg-accent text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small text-[10px] font-bold border-none cursor-pointer">
+                      Create Ticket
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Column 2: SLA & Warranty Expirations */}
+          <Card className="rounded-[32px] border-neu shadow-neu-extruded bg-background">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-accent" /> SLA & Warranties
+              </CardTitle>
+              <CardDescription className="text-xs font-bold text-muted-foreground">
+                Support contracts ending within 30 days
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 pt-4">
+              {expiringSlas.map((sla) => (
+                <div key={sla.id} className="p-3.5 rounded-2xl bg-[#E0E5EC] shadow-neu-inset border border-white/40 text-xs flex justify-between items-center font-semibold text-foreground">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-accent">{sla.tag}</span>
+                      <span className="text-[10px] text-muted-foreground">({sla.hostname})</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{sla.provider}</p>
+                  </div>
+                  <span className="px-2 py-1 rounded-xl text-[10px] font-bold bg-amber-500/10 text-amber-600 shadow-neu-small border border-white/60">
+                    {sla.daysLeft} days
+                  </span>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Column 3: Recent System Audit Logs */}
+          <Card className="rounded-[32px] border-neu shadow-neu-extruded bg-background">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+                <User className="w-5 h-5 text-accent" /> System Audit Logs
+              </CardTitle>
+              <CardDescription className="text-xs font-bold text-muted-foreground">
+                Recent layout and inventory changes
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 pt-4">
+              {auditLogs.map((log) => (
+                <div key={log.id} className="p-3.5 rounded-2xl bg-[#E0E5EC] shadow-neu-inset border border-white/40 text-xs space-y-1.5">
+                  <div className="flex justify-between items-center text-[10px] font-bold text-muted-foreground">
+                    <span className="text-foreground flex items-center gap-1"><User size={10} /> {log.user}</span>
+                    <span>{log.time}</span>
+                  </div>
+                  <p className="font-semibold text-foreground leading-normal">
+                    {log.action} <span className="text-accent">{log.target}</span>
+                  </p>
+                  <p className="text-[10px] text-muted-foreground font-semibold bg-background/30 p-1.5 rounded-lg border border-white/30 truncate">{log.detail}</p>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
         </div>
 
       </div>

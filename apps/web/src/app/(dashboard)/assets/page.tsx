@@ -87,6 +87,40 @@ export default function AllAssetsPage() {
   const [selectedAssetIds, setSelectedAssetIds] = useState<Set<number>>(new Set());
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isBulkStatusOpen, setIsBulkStatusOpen] = useState(false);
+  const bulkStatusRef = useRef<HTMLDivElement>(null);
+
+  // Layout View Mode State
+  const [viewMode, setViewMode] = useState<"table" | "grid">("table");
+
+  // Handle bulk status updates click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (bulkStatusRef.current && !bulkStatusRef.current.contains(event.target as Node)) {
+        setIsBulkStatusOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleBulkStatusUpdate = async (status: string) => {
+    if (!confirm(`Are you sure you want to update status of ${selectedAssetIds.size} assets to "${status}"?`)) return;
+    
+    setIsLoading(true);
+    let errorCount = 0;
+    for (const id of selectedAssetIds) {
+      try {
+        await apiClient.patch(`/assets/${id}`, { status });
+      } catch (err) {
+        console.error(`Failed to update status for asset ${id}`, err);
+        errorCount++;
+      }
+    }
+    if (errorCount > 0) alert(`Failed to update status for ${errorCount} assets.`);
+    setSelectedAssetIds(new Set());
+    fetchAssets();
+  };
 
   const fetchAssets = async () => {
       try {
@@ -417,6 +451,21 @@ export default function AllAssetsPage() {
             >
               <Filter className="w-5 h-5" />
             </Button>
+
+            <div className="h-12 flex bg-background p-1 rounded-2xl shadow-neu-extruded border-neu">
+              <button 
+                onClick={() => setViewMode("table")}
+                className={`h-full px-4 rounded-xl font-bold text-xs transition-all duration-200 border-none cursor-pointer ${viewMode === "table" ? "bg-accent text-white shadow-neu-inset-small" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Table
+              </button>
+              <button 
+                onClick={() => setViewMode("grid")}
+                className={`h-full px-4 rounded-xl font-bold text-xs transition-all duration-200 border-none cursor-pointer ${viewMode === "grid" ? "bg-accent text-white shadow-neu-inset-small" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Grid
+              </button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -430,6 +479,31 @@ export default function AllAssetsPage() {
             <Button onClick={() => setIsQRModalOpen(true)} variant="ghost" className="h-9 px-4 rounded-xl shadow-neu-inset-small bg-background hover:shadow-neu-hover font-bold text-xs text-foreground hover:text-accent">
               <QrCode size={16} className="mr-2" /> Print QR
             </Button>
+            
+            {/* Bulk Status Update Dropdown */}
+            <div className="relative" ref={bulkStatusRef}>
+              <Button 
+                onClick={() => setIsBulkStatusOpen(!isBulkStatusOpen)} 
+                variant="ghost" 
+                className="h-9 px-4 rounded-xl shadow-neu-inset-small bg-background hover:shadow-neu-hover font-bold text-xs text-foreground hover:text-accent"
+              >
+                <Activity size={16} className="mr-2" /> Change Status
+              </Button>
+              {isBulkStatusOpen && (
+                <div className="absolute bottom-full mb-2 left-0 z-50 bg-[#E4E9F2] rounded-2xl shadow-neu-extruded border border-white/50 py-2 w-44">
+                  {['Active', 'Maintenance', 'Offline'].map((st) => (
+                    <div 
+                      key={st}
+                      onClick={() => { handleBulkStatusUpdate(st); setIsBulkStatusOpen(false); }}
+                      className="px-4 py-2.5 text-xs font-bold text-foreground cursor-pointer hover:bg-[#A3B1C6]/20 transition-colors"
+                    >
+                      Set to {st}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Button variant="ghost" onClick={handleBulkDelete} className="h-9 px-4 rounded-xl shadow-neu-inset-small bg-background hover:shadow-neu-hover font-bold text-xs text-red-500 hover:text-red-600">
               <Trash2 size={16} className="mr-2" /> Delete
             </Button>
@@ -440,99 +514,172 @@ export default function AllAssetsPage() {
         </div>
       )}
 
-      {/* Data Table */}
-      <Card className="rounded-[32px] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse min-w-[1000px]">
-            <thead className="text-xs text-muted-foreground uppercase tracking-wider bg-[#E4E9F2]/50 border-b border-[#A3B1C6]/30">
-              <tr>
-                <th className="px-6 py-4">
-                  <input 
-                    type="checkbox" 
-                    className="rounded border-[#A3B1C6] text-accent focus:ring-accent"
-                    checked={currentAssets.length > 0 && selectedAssetIds.size === currentAssets.length}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-                <th className="px-6 py-5 font-bold cursor-pointer hover:text-accent group whitespace-nowrap">
-                  <div className="flex items-center gap-2">Asset Tag <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></div>
-                </th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Hostname</th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Category</th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Location</th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Rack</th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Status</th>
-                <th className="px-6 py-5 font-bold whitespace-nowrap">Warranty</th>
-                <th className="px-6 py-5 font-bold text-right whitespace-nowrap">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-foreground">
-              {filteredAssets.length === 0 ? (
+      {/* Data Presentation (Table or Grid) */}
+      {viewMode === "table" ? (
+        <Card className="rounded-[32px] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left border-collapse min-w-[1000px]">
+              <thead className="text-xs text-muted-foreground uppercase tracking-wider bg-[#E4E9F2]/50 border-b border-[#A3B1C6]/30">
                 <tr>
-                  <td colSpan={9} className="px-6 py-12 text-center text-muted-foreground font-bold">
-                    <AlertCircle className="w-8 h-8 mx-auto mb-3 opacity-50" />
-                    No assets found matching your criteria.
-                  </td>
+                  <th className="px-6 py-4">
+                    <input 
+                      type="checkbox" 
+                      className="rounded border-[#A3B1C6] text-accent focus:ring-accent"
+                      checked={currentAssets.length > 0 && selectedAssetIds.size === currentAssets.length}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th className="px-6 py-5 font-bold cursor-pointer hover:text-accent group whitespace-nowrap">
+                    <div className="flex items-center gap-2">Asset Tag <ArrowUpDown className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" /></div>
+                  </th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Hostname</th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Category</th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Location</th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Rack</th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Status</th>
+                  <th className="px-6 py-5 font-bold whitespace-nowrap">Warranty</th>
+                  <th className="px-6 py-5 font-bold text-right whitespace-nowrap">Actions</th>
                 </tr>
-              ) : (
-                currentAssets.map((asset) => (
-                  <tr 
-                    key={asset.id} 
-                    className={`border-b border-white/20 transition-all duration-300 cursor-pointer group ${selectedAssetIds.has(asset.id) ? 'bg-accent/5' : 'hover:bg-[#A3B1C6]/10 hover:shadow-neu-inset-small'}`}
-                    onClick={() => window.location.href = `/assets/${asset.tag}`}
-                  >
-                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+              </thead>
+              <tbody className="text-foreground">
+                {filteredAssets.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-12 text-center text-muted-foreground font-bold">
+                      <AlertCircle className="w-8 h-8 mx-auto mb-3 opacity-50" />
+                      No assets found matching your criteria.
+                    </td>
+                  </tr>
+                ) : (
+                  currentAssets.map((asset) => (
+                    <tr 
+                      key={asset.id} 
+                      className={`border-b border-white/20 transition-all duration-300 cursor-pointer group ${selectedAssetIds.has(asset.id) ? 'bg-accent/5' : 'hover:bg-[#A3B1C6]/10 hover:shadow-neu-inset-small'}`}
+                      onClick={() => window.location.href = `/assets/${asset.tag}`}
+                    >
+                      <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                        <input 
+                          type="checkbox" 
+                          className="rounded border-[#A3B1C6] text-accent focus:ring-accent"
+                          checked={selectedAssetIds.has(asset.id)}
+                          onChange={() => handleSelectAsset(asset.id)}
+                        />
+                      </td>
+                      <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
+                        <div className="font-bold text-accent group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded border border-white/40 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                            <img src={getAssetImage(asset.cat)} alt={asset.cat} className="w-full h-full object-cover scale-[1.3]" />
+                          </div>
+                          <span className="truncate group-hover:text-accent-light transition-colors">{asset.tag}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 font-semibold border-b border-white/60 whitespace-nowrap align-middle">{asset.host}</td>
+                      <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
+                        <span className="px-3 py-1 bg-background shadow-neu-extruded border-neu text-muted-foreground text-[10px] font-bold rounded-lg uppercase">{asset.cat}</span>
+                      </td>
+                      <td className="px-6 py-4 font-semibold border-b border-white/60 whitespace-nowrap align-middle">
+                        <div className="flex flex-col justify-center">
+                          <span>{asset.loc}</span>
+                          <span className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">{asset.room}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
+                        {['Floor', 'Wall Mount', 'Pad', 'Ceiling', 'Roof Platform'].includes(asset.rack) ? (
+                          <span className="px-2.5 py-1 bg-background shadow-neu-inset-small border border-[#A3B1C6]/20 text-muted-foreground text-[10px] font-bold rounded-lg uppercase">{asset.rack}</span>
+                        ) : (
+                          <span className="font-mono text-xs font-bold text-muted-foreground bg-[#E4E9F2]/50 px-2 py-1 rounded-md">{asset.rack}{asset.u !== '-' ? `-${asset.u}` : ''}</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
+                        {asset.status === 'Active' && <span className="px-3 py-1 bg-[#38B2AC]/10 text-[#38B2AC] text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Active</span>}
+                        {asset.status === 'Maintenance' && <span className="px-3 py-1 bg-[#8B84FF]/10 text-[#8B84FF] text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Maint</span>}
+                        {asset.status === 'Offline' && <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Offline</span>}
+                      </td>
+                      <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
+                        {asset.warranty === 'Active' && <span className="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Active</span>}
+                        {asset.warranty === 'Expiring' && <span className="px-3 py-1 bg-amber-500/10 text-amber-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Expiring</span>}
+                        {asset.warranty === 'Expired' && <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Expired</span>}
+                        {!['Active', 'Expiring', 'Expired'].includes(asset.warranty) && <span className="px-3 py-1 bg-gray-500/10 text-gray-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">{asset.warranty}</span>}
+                      </td>
+                      <td className="px-6 py-4 border-b border-white/60 text-right whitespace-nowrap align-middle">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent shadow-none">
+                          <MoreHorizontal className="w-5 h-5" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : (
+        /* Grid Card View Layout */
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredAssets.length === 0 ? (
+            <Card className="col-span-full rounded-[32px] p-12 text-center text-muted-foreground font-bold bg-background shadow-neu-extruded">
+              <AlertCircle className="w-8 h-8 mx-auto mb-3 opacity-50 text-muted-foreground" />
+              No assets found matching your criteria.
+            </Card>
+          ) : (
+            currentAssets.map((asset) => (
+              <Card 
+                key={asset.id} 
+                onClick={() => window.location.href = `/assets/${asset.tag}`}
+                className={`rounded-[32px] border-neu shadow-neu-extruded bg-background overflow-hidden relative group cursor-pointer transition-all duration-300 ${selectedAssetIds.has(asset.id) ? 'bg-accent/5' : 'hover:shadow-neu-hover hover:-translate-y-1'}`}
+              >
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded-2xl bg-background shadow-neu-inset border border-white/40 flex items-center justify-center shrink-0 overflow-hidden">
+                        <img src={getAssetImage(asset.cat)} alt={asset.cat} className="w-full h-full object-cover scale-[1.3]" />
+                      </div>
+                      <div>
+                        <h4 className="font-display font-black text-accent text-sm group-hover:text-accent-light transition-colors">{asset.tag}</h4>
+                        <p className="text-xs font-semibold text-foreground truncate max-w-[150px]">{asset.host}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       <input 
                         type="checkbox" 
                         className="rounded border-[#A3B1C6] text-accent focus:ring-accent"
                         checked={selectedAssetIds.has(asset.id)}
                         onChange={() => handleSelectAsset(asset.id)}
                       />
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      <div className="font-bold text-accent group-hover:translate-x-1 transition-transform duration-300 flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded border border-white/40 flex items-center justify-center shrink-0 overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                          <img src={getAssetImage(asset.cat)} alt={asset.cat} className="w-full h-full object-cover scale-[1.3]" />
-                        </div>
-                        <span className="truncate group-hover:text-accent-light transition-colors">{asset.tag}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 font-semibold border-b border-white/60 whitespace-nowrap align-middle">{asset.host}</td>
-                    <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      <span className="px-3 py-1 bg-background shadow-neu-extruded border-neu text-muted-foreground text-[10px] font-bold rounded-lg uppercase">{asset.cat}</span>
-                    </td>
-                    <td className="px-6 py-4 font-semibold border-b border-white/60 whitespace-nowrap align-middle">
-                      <div className="flex flex-col justify-center">
-                        <span>{asset.loc}</span>
-                        <span className="text-[10px] text-muted-foreground uppercase tracking-wide mt-0.5">{asset.room}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      {['Floor', 'Wall Mount', 'Pad', 'Ceiling', 'Roof Platform'].includes(asset.rack) ? (
-                        <span className="px-2.5 py-1 bg-background shadow-neu-inset-small border border-[#A3B1C6]/20 text-muted-foreground text-[10px] font-bold rounded-lg uppercase">{asset.rack}</span>
-                      ) : (
-                        <span className="font-mono text-xs font-bold text-muted-foreground bg-[#E4E9F2]/50 px-2 py-1 rounded-md">{asset.rack}{asset.u !== '-' ? `-${asset.u}` : ''}</span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      {asset.status === 'Active' && <span className="px-3 py-1 bg-[#38B2AC]/10 text-[#38B2AC] text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Active</span>}
-                      {asset.status === 'Maintenance' && <span className="px-3 py-1 bg-[#8B84FF]/10 text-[#8B84FF] text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Maint</span>}
-                      {asset.status === 'Offline' && <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[10px] font-bold rounded-lg uppercase whitespace-nowrap">Offline</span>}
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/60 whitespace-nowrap align-middle">
-                      <span className={`text-xs font-bold ${asset.warranty === 'Expired' ? 'text-red-500' : 'text-muted-foreground'}`}>{asset.warranty}</span>
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/60 text-right whitespace-nowrap align-middle">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-accent shadow-none">
-                        <MoreHorizontal className="w-5 h-5" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3 text-xs font-semibold pt-2 border-t border-[#A3B1C6]/20">
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">Category</span>
+                      <span className="px-2 py-0.5 bg-background shadow-neu-inset-small border border-[#A3B1C6]/10 text-muted-foreground text-[9px] font-bold rounded uppercase truncate block max-w-[100px]">{asset.cat}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">Location</span>
+                      <span className="text-foreground text-[11px] truncate block">{asset.loc}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">Status</span>
+                      {asset.status === 'Active' && <span className="px-2 py-0.5 bg-[#38B2AC]/10 text-[#38B2AC] text-[9px] font-bold rounded uppercase whitespace-nowrap">Active</span>}
+                      {asset.status === 'Maintenance' && <span className="px-2 py-0.5 bg-[#8B84FF]/10 text-[#8B84FF] text-[9px] font-bold rounded uppercase whitespace-nowrap">Maint</span>}
+                      {asset.status === 'Offline' && <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[9px] font-bold rounded uppercase whitespace-nowrap">Offline</span>}
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-muted-foreground block">Warranty</span>
+                      {asset.warranty === 'Active' && <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] font-bold rounded uppercase whitespace-nowrap">Active</span>}
+                      {asset.warranty === 'Expiring' && <span className="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-[9px] font-bold rounded uppercase whitespace-nowrap">Expiring</span>}
+                      {asset.warranty === 'Expired' && <span className="px-2 py-0.5 bg-red-500/10 text-red-500 text-[9px] font-bold rounded uppercase whitespace-nowrap">Expired</span>}
+                      {!['Active', 'Expiring', 'Expired'].includes(asset.warranty) && <span className="px-2 py-0.5 bg-gray-500/10 text-gray-500 text-[9px] font-bold rounded uppercase whitespace-nowrap truncate block max-w-[100px]">{asset.warranty}</span>}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
+      )}
+
+      {/* Pagination wrapper */}
+      <Card className="rounded-[32px] overflow-hidden mt-6">
         
         {/* Pagination Controls */}
         <div className="p-4 sm:p-6 border-t border-[#A3B1C6]/30 flex flex-col sm:flex-row items-center justify-between gap-4">

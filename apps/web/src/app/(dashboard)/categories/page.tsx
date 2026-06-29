@@ -103,6 +103,15 @@ export default function CategoriesPage() {
     setIsDrawerOpen(true);
   }
 
+  const handleNameChange = (nameVal: string) => {
+    if (isEditing) {
+      setFormData(prev => ({ ...prev, name: nameVal }));
+    } else {
+      const generatedCode = nameVal.toUpperCase().replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '');
+      setFormData(prev => ({ ...prev, name: nameVal, code: generatedCode }));
+    }
+  }
+
   const openEditDrawer = (category: any, e?: any) => {
     if (e) e.stopPropagation();
     setFormData({ 
@@ -346,12 +355,21 @@ export default function CategoriesPage() {
                   onClick={() => router.push(`/categories/${category.id}`)}
                   className="bg-background shadow-neu-extruded border-neu rounded-3xl p-6 hover:shadow-neu-hover active:shadow-neu-inset-small transition-all cursor-pointer group"
                 >
-                  <div className="flex justify-between items-start mb-6">
+                  <div className="flex justify-between items-start mb-4">
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-neu-inset bg-background" style={{ border: `1px solid ${category.color}30` }}>
                       {renderIcon(category.icon, category.color, "w-7 h-7")}
                     </div>
                     <span className="px-3 py-1 text-[10px] bg-background shadow-neu-inset border border-white/50 rounded-lg text-muted-foreground font-mono font-bold">{category.code}</span>
                   </div>
+
+                  {category.parentId && (
+                    <div className="mb-2">
+                      <span className="inline-block px-2 py-0.5 bg-background shadow-neu-inset-small border border-white/40 text-[9px] font-bold text-muted-foreground rounded uppercase tracking-wider">
+                        Sub of {categories.find(c => c.id === category.parentId)?.name || "Parent"}
+                      </span>
+                    </div>
+                  )}
+
                   <h3 className="text-lg font-bold text-foreground mb-2 group-hover:text-accent transition-colors">{category.name}</h3>
                   <p className="text-xs text-muted-foreground font-medium line-clamp-2 mb-6 min-h-[32px]">
                     {category.description || "No description provided."}
@@ -395,7 +413,10 @@ export default function CategoriesPage() {
                       return (
                         <tr key={category.id} onClick={() => router.push(`/categories/${category.id}`)} className="group hover:bg-[#A3B1C6]/10 transition-all duration-300 cursor-pointer">
                           <td className="px-8 py-5">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4" style={{ paddingLeft: category.parentId ? '24px' : '0px' }}>
+                              {category.parentId && (
+                                <span className="text-muted-foreground font-mono text-xs mr-1 select-none">↳</span>
+                              )}
                               <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-neu-inset bg-background" style={{ border: `1px solid ${category.color}30` }}>
                                 {renderIcon(category.icon, category.color)}
                               </div>
@@ -501,7 +522,7 @@ export default function CategoriesPage() {
               <div className="space-y-6 pt-4 border-t border-[#A3B1C6]/30">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Category Name *</label>
-                  <input type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Workstations" className="w-full h-14 px-4 bg-background shadow-neu-inset-deep border-neu rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground" />
+                  <input type="text" value={formData.name} onChange={e => handleNameChange(e.target.value)} placeholder="e.g. Workstations" className="w-full h-14 px-4 bg-background shadow-neu-inset-deep border-neu rounded-2xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-accent/50 text-foreground" />
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">

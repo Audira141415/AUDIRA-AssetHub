@@ -6,7 +6,7 @@ import { Html5Qrcode } from "html5-qrcode"
 import { HeroSection } from "@/components/ui/hero-section"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Scan, Keyboard, Camera, History, ArrowRight, QrCode, X, Search } from "lucide-react"
+import { Scan, Keyboard, Camera, History, ArrowRight, QrCode, X, Search, Zap, Clock } from "lucide-react"
 
 export default function ScannerPage() {
   const router = useRouter()
@@ -14,17 +14,68 @@ export default function ScannerPage() {
   const [isScanning, setIsScanning] = useState(false)
   const [manualCode, setManualCode] = useState("")
   const [mode, setMode] = useState<"scan" | "manual">("scan")
+  const [isTorchOn, setIsTorchOn] = useState(false)
+  const [hasTorch, setHasTorch] = useState(false)
+  const [scanHistory, setScanHistory] = useState<{ tag: string; timestamp: string }[]>([])
   
   const scannerRef = useRef<Html5Qrcode | null>(null)
 
+  // Load history on mount
   useEffect(() => {
-    // Cleanup on unmount
-    return () => {
-      if (scannerRef.current && isScanning) {
-        scannerRef.current.stop().catch(console.error)
+    const history = localStorage.getItem("audira_scan_history")
+    if (history) {
+      try {
+        setScanHistory(JSON.parse(history))
+      } catch (e) {
+        console.error("Failed to parse scan history", e)
       }
     }
-  }, [isScanning])
+  }, [])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().catch(() => {})
+      }
+    }
+  }, [])
+
+  // Play standard industrial scanner beep
+  const playBeep = () => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(1200, ctx.currentTime); // high pitch beep
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+      
+      // Haptic Vibration pulse
+      if (typeof window !== "undefined" && window.navigator.vibrate) {
+        window.navigator.vibrate(100);
+      }
+    } catch (e) {
+      console.error("Audio beep failed", e);
+    }
+  }
+
+  // Save to localStorage history
+  const saveToHistory = (tag: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const newItem = { tag, timestamp };
+    setScanHistory(prev => {
+      const filtered = prev.filter(item => item.tag !== tag);
+      const updated = [newItem, ...filtered].slice(0, 5);
+      localStorage.setItem("audira_scan_history", JSON.stringify(updated));
+      return updated;
+    });
+  }
 
   const startScanner = async () => {
     try {
@@ -41,9 +92,12 @@ export default function ScannerPage() {
           aspectRatio: 1.0 
         },
         (decodedText) => {
+          playBeep()
+          saveToHistory(decodedText)
           setScanResult(decodedText)
-          scannerRef.current?.stop().catch(console.error)
+          scannerRef.current?.stop().catch(() => {})
           setIsScanning(false)
+          setIsTorchOn(false)
           
           setTimeout(() => {
             router.push(`/assets/${encodeURIComponent(decodedText)}`)
@@ -53,6 +107,18 @@ export default function ScannerPage() {
           // ignore continuous scan errors
         }
       )
+
+      // Detect torch constraint capability
+      try {
+        const track = (scannerRef.current as any).getActiveVideoTrack();
+        if (track && track.getCapabilities?.().torch) {
+          setHasTorch(true)
+        } else {
+          setHasTorch(false)
+        }
+      } catch (e) {
+        setHasTorch(false)
+      }
     } catch (err) {
       console.error("Failed to start scanner", err)
       setIsScanning(false)
@@ -65,8 +131,28 @@ export default function ScannerPage() {
       try {
         await scannerRef.current.stop()
         setIsScanning(false)
+        setIsTorchOn(false)
       } catch (err) {
         console.error("Failed to stop scanner", err)
+      }
+    }
+  }
+
+  const toggleTorch = async () => {
+    if (scannerRef.current && isScanning) {
+      try {
+        const track = (scannerRef.current as any).getActiveVideoTrack();
+        if (track && track.getCapabilities?.().torch) {
+          const newState = !isTorchOn;
+          await track.applyConstraints({
+            advanced: [{ torch: newState } as any]
+          });
+          setIsTorchOn(newState);
+        } else {
+          alert("Senter tidak didukung pada kamera/perangkat ini.");
+        }
+      } catch (err) {
+        console.error("Failed to toggle torch", err);
       }
     }
   }
@@ -74,6 +160,7 @@ export default function ScannerPage() {
   const handleManualSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (manualCode.trim()) {
+      saveToHistory(manualCode.trim())
       router.push(`/assets/${encodeURIComponent(manualCode.trim())}`)
     }
   }
@@ -130,15 +217,31 @@ export default function ScannerPage() {
               ) : mode === "scan" ? (
                 <div className="w-full max-w-md mx-auto flex flex-col items-center">
                   <div className="relative w-full aspect-square bg-background shadow-neu-inset-deep border-neu rounded-3xl overflow-hidden mb-8 flex items-center justify-center p-2">
-                    <div id="reader" className="w-full h-full rounded-2xl overflow-hidden bg-black/5 flex items-center justify-center relative z-10 [&>video]:object-cover [&>video]:w-full [&>video]:h-full">
+                    <div className="w-full h-full relative z-10">
+                      <div 
+                        id="reader" 
+                        className="w-full h-full rounded-2xl overflow-hidden bg-black/5 [&>video]:object-cover [&>video]:w-full [&>video]:h-full"
+                        suppressHydrationWarning
+                      />
                       {!isScanning && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground opacity-50 z-20">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-muted-foreground opacity-50 z-20 pointer-events-none">
                           <Camera size={48} className="mb-4" />
                           <p className="font-bold text-sm">Camera Offline</p>
                         </div>
                       )}
                     </div>
                     
+                    {/* Camera Flashlight/Torch Toggle Button Overlay */}
+                    {isScanning && hasTorch && (
+                      <button 
+                        onClick={toggleTorch}
+                        className={`absolute top-4 right-4 z-30 p-3 rounded-2xl bg-background/80 backdrop-blur-md shadow-neu-extruded hover:shadow-neu-hover border border-white/40 transition-all font-bold text-xs ${isTorchOn ? 'text-yellow-500' : 'text-muted-foreground'}`}
+                        title="Toggle Flashlight"
+                      >
+                        <Zap size={18} className={isTorchOn ? 'fill-yellow-500' : ''} />
+                      </button>
+                    )}
+
                     {/* Scanner overlay visuals */}
                     {isScanning && (
                       <div className="absolute inset-4 z-20 pointer-events-none">
@@ -152,11 +255,11 @@ export default function ScannerPage() {
                   </div>
 
                   {!isScanning ? (
-                    <Button onClick={startScanner} className="h-14 px-8 rounded-2xl bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small font-bold text-base w-full max-w-xs transition-all flex gap-3">
+                    <Button onClick={startScanner} className="h-14 px-8 rounded-2xl bg-accent hover:bg-accent/90 text-white shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small font-bold text-base w-full max-w-xs transition-all flex gap-3 cursor-pointer">
                       <Scan size={20} /> Start Scanner
                     </Button>
                   ) : (
-                    <Button onClick={stopScanner} className="h-14 px-8 rounded-2xl bg-background border-2 border-red-500/20 text-red-500 shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small font-bold text-base w-full max-w-xs transition-all flex gap-3">
+                    <Button onClick={stopScanner} className="h-14 px-8 rounded-2xl bg-background border-2 border-red-500/20 text-red-500 shadow-neu-extruded hover:shadow-neu-hover active:shadow-neu-inset-small font-bold text-base w-full max-w-xs transition-all flex gap-3 cursor-pointer">
                       <X size={20} /> Stop Scanner
                     </Button>
                   )}
@@ -195,22 +298,39 @@ export default function ScannerPage() {
               </h3>
               
               <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-background shadow-neu-inset-small border border-white/50 rounded-2xl p-4 flex items-center justify-between group cursor-pointer hover:shadow-neu-inset transition-all">
-                    <div>
-                      <p className="font-bold text-foreground text-sm group-hover:text-accent transition-colors">SVR-2026-00{i}</p>
-                      <p className="text-xs text-muted-foreground font-medium mt-1">Today, {10 + i}:30 AM</p>
+                {scanHistory.length > 0 ? (
+                  scanHistory.map((item, idx) => (
+                    <div 
+                      key={idx} 
+                      onClick={() => router.push(`/assets/${encodeURIComponent(item.tag)}`)}
+                      className="bg-background shadow-neu-inset-small border border-white/50 rounded-2xl p-4 flex items-center justify-between group cursor-pointer hover:shadow-neu-inset transition-all"
+                    >
+                      <div>
+                        <p className="font-bold text-foreground text-sm group-hover:text-accent transition-colors">{item.tag}</p>
+                        <p className="text-xs text-muted-foreground font-medium mt-1">Today, {item.timestamp}</p>
+                      </div>
+                      <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded flex items-center justify-center text-muted-foreground group-hover:text-accent group-hover:shadow-neu-hover transition-all">
+                        <ArrowRight size={14} />
+                      </div>
                     </div>
-                    <div className="w-8 h-8 rounded-lg bg-background shadow-neu-extruded flex items-center justify-center text-muted-foreground group-hover:text-accent group-hover:shadow-neu-hover transition-all">
-                      <ArrowRight size={14} />
-                    </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-xs text-muted-foreground text-center py-6 font-semibold">No recent scans recorded.</p>
+                )}
               </div>
               
-              <Button variant="ghost" className="w-full mt-6 text-xs font-bold text-muted-foreground hover:text-foreground">
-                View Full History
-              </Button>
+              {scanHistory.length > 0 && (
+                <Button 
+                  onClick={() => {
+                    localStorage.removeItem("audira_scan_history");
+                    setScanHistory([]);
+                  }} 
+                  variant="ghost" 
+                  className="w-full mt-6 text-xs font-bold text-red-500 hover:text-red-600"
+                >
+                  Clear Scan History
+                </Button>
+              )}
             </div>
             
             <div className="bg-accent/10 shadow-neu-inset-small border border-accent/20 rounded-[32px] p-8 text-center">

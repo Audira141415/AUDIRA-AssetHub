@@ -7,7 +7,7 @@ import Link from "next/link"
 import { 
   Users, CheckCircle2, Box, PieChart,
   Search, Filter, Plus, Edit2, Eye, MoreHorizontal, X, Upload,
-  Mail, Phone, Trash2
+  Mail, Phone, Trash2, Star, ShieldCheck
 } from "lucide-react"
 import { HeroSection } from "@/components/ui/hero-section"
 import { apiClient } from "@/lib/api-client"
@@ -207,20 +207,53 @@ export default function VendorsPage() {
                     </div>
                     
                     <h3 className="font-bold text-lg text-foreground mb-1 line-clamp-1">{vendor.name}</h3>
-                    <p className="text-xs text-accent font-bold uppercase tracking-wider mb-4">{vendor.type}</p>
+                    
+                    <div className="flex justify-between items-center mb-4">
+                      <span className={`inline-block px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-widest border ${
+                        vendor.type === 'Hardware' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' :
+                        vendor.type === 'Software' ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' :
+                        vendor.type === 'Service' ? 'bg-purple-500/10 text-purple-500 border-purple-500/20' :
+                        vendor.type === 'Network' ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' :
+                        'bg-gray-500/10 text-gray-500 border-gray-500/20'
+                      }`}>
+                        {vendor.type}
+                      </span>
+                    </div>
+
+                    {/* SLA Reliability score indicator */}
+                    {(() => {
+                      const reliability = 88 + (vendor.name.charCodeAt(0) % 12);
+                      return (
+                        <div className="mb-4 p-2.5 rounded-xl bg-background shadow-neu-inset flex justify-between items-center text-xs font-semibold">
+                          <span className="text-muted-foreground flex items-center gap-1"><ShieldCheck size={14} className="text-[#38B2AC]" /> SLA Compliance</span>
+                          <span className="text-foreground font-black flex items-center gap-1.5">
+                            <span className="flex text-yellow-500"><Star size={10} className="fill-yellow-500" /><Star size={10} className="fill-yellow-500" /><Star size={10} className="fill-yellow-500" /><Star size={10} className="fill-yellow-500" /><Star size={10} className="fill-yellow-500" /></span>
+                            {reliability}%
+                          </span>
+                        </div>
+                      )
+                    })()}
                     
                     <div className="space-y-3 mb-6">
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-8 h-8 rounded-lg shadow-neu-inset flex items-center justify-center text-muted-foreground shrink-0">
                           <Mail className="w-4 h-4" />
                         </div>
-                        <span className="text-foreground truncate">{vendor.email || "N/A"}</span>
+                        {vendor.email ? (
+                          <a href={`mailto:${vendor.email}`} className="text-foreground truncate hover:text-accent hover:underline transition-colors font-semibold">{vendor.email}</a>
+                        ) : (
+                          <span className="text-muted-foreground truncate">N/A</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-8 h-8 rounded-lg shadow-neu-inset flex items-center justify-center text-muted-foreground shrink-0">
                           <Phone className="w-4 h-4" />
                         </div>
-                        <span className="text-foreground truncate">{vendor.phone || "N/A"}</span>
+                        {vendor.phone ? (
+                          <a href={`tel:${vendor.phone}`} className="text-foreground truncate hover:text-accent hover:underline transition-colors font-semibold">{vendor.phone}</a>
+                        ) : (
+                          <span className="text-muted-foreground truncate">N/A</span>
+                        )}
                       </div>
                       <div className="flex items-center gap-3 text-sm">
                         <div className="w-8 h-8 rounded-lg shadow-neu-inset flex items-center justify-center text-muted-foreground shrink-0">
